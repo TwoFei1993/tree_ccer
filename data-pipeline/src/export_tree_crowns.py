@@ -8,7 +8,6 @@
 10%的树(实测2018年842/8075棵)因质心落在网格范围外而被groupby默认丢弃NaN分组时静默剔除。
 用最近邻分配保证每棵树都能找到一个归属网格,不会有树在分片阶段消失。
 """
-import json
 from pathlib import Path
 
 import geopandas as gpd
