@@ -1,0 +1,102 @@
+[
+  {
+    "config_name": "当前方案: 二次多项式+卫星光谱",
+    "per_k": {
+      "30": {
+        "improvement_mean_pct": 71.91452701069957,
+        "improvement_min_pct": 59.79145105578125
+      },
+      "50": {
+        "improvement_mean_pct": 66.38671929394866,
+        "improvement_min_pct": 52.56138755934842
+      },
+      "80": {
+        "improvement_mean_pct": 59.396756918948526,
+        "improvement_min_pct": 48.559905020537286
+      },
+      "120": {
+        "improvement_mean_pct": 50.33494509776173,
+        "improvement_min_pct": 43.47752014211459
+      },
+      "200": {
+        "improvement_mean_pct": 42.11826497144524,
+        "improvement_min_pct": 34.689565786573716
+      }
+    }
+  },
+  {
+    "config_name": "方向A: 随机森林+卫星光谱",
+    "per_k": {
+      "30": {
+        "improvement_mean_pct": 79.20962981366559,
+        "improvement_min_pct": 71.29940577662117
+      },
+      "50": {
+        "improvement_mean_pct": 73.61576710116853,
+        "improvement_min_pct": 65.18462975971435
+      },
+      "80": {
+        "improvement_mean_pct": 66.52155841909072,
+        "improvement_min_pct": 54.876835817524636
+      },
+      "120": {
+        "improvement_mean_pct": 56.828869529447275,
+        "improvement_min_pct": 46.96975262955366
+      },
+      "200": {
+        "improvement_mean_pct": 44.75027244789717,
+        "improvement_min_pct": 33.86254277972894
+      }
+    }
+  },
+  {
+    "config_name": "方向B: 二次多项式+卫星光谱+2018结构变量",
+    "per_k": {
+      "30": {
+        "improvement_mean_pct": 71.46201775473318,
+        "improvement_min_pct": 65.88831167841491
+      },
+      "50": {
+        "improvement_mean_pct": 65.23543482614451,
+        "improvement_min_pct": 55.76683715574988
+      },
+      "80": {
+        "improvement_mean_pct": 54.48358456596556,
+        "improvement_min_pct": 43.343751574440454
+      },
+      "120": {
+        "improvement_mean_pct": 41.212534188900655,
+        "improvement_min_pct": 19.558532043147068
+      },
+      "200": {
+        "improvement_mean_pct": 33.33641902389387,
+        "improvement_min_pct": 8.870313063643549
+      }
+    }
+  },
+  {
+    "config_name": "方向C: 随机森林+卫星光谱+2018结构变量",
+    "per_k": {
+      "30": {
+        "improvement_mean_pct": 76.78582005171796,
+        "improvement_min_pct": 71.7400020462164
+      },
+      "50": {
+        "improvement_mean_pct": 71.78911530602412,
+        "improvement_min_pct": 66.6253836138897
+      },
+      "80": {
+        "improvement_mean_pct": 64.56010326934998,
+        "improvement_min_pct": 55.47349939984376
+      },
+      "120": {
+        "improvement_mean_pct": 56.756810219375225,
+        "improvement_min_pct": 43.28666177168322
+      },
+      "200": {
+        "improvement_mean_pct": 47.61544362424155,
+        "improvement_min_pct": 32.52868374826555
+      }
+    }
+  }
+]
