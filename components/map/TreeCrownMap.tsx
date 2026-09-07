@@ -7,6 +7,7 @@ import type { FeatureCollection, Geometry } from "geojson";
 import type { TreeCrownProperties } from "@/lib/types/geo";
 import { buildTreeCrownExtrusionLayer } from "@/lib/map/deckLayers";
 import { MapSkeleton } from "@/components/ui/MapSkeleton";
+import { WebGLGuard } from "@/components/map/WebGLGuard";
 
 // 塞罕坝研究区中心点(WGS84经纬度,据事实核对表UTM边界换算的大致中心)
 const INITIAL_VIEW_STATE = {
@@ -76,15 +77,17 @@ export function TreeCrownMap({ overviewGeoJsonUrl }: TreeCrownMapProps) {
     });
   }, [data]);
 
-  if (!data) {
-    return <MapSkeleton />;
-  }
-
   return (
-    <div
-      ref={mapContainerCallbackRef}
-      className="h-[70vh] w-full rounded-md border border-stone-300 bg-stone-50"
-      data-testid="tree-crown-map"
-    />
+    <WebGLGuard>
+      {!data ? (
+        <MapSkeleton />
+      ) : (
+        <div
+          ref={mapContainerCallbackRef}
+          className="h-[70vh] w-full rounded-md border border-stone-300 bg-stone-50"
+          data-testid="tree-crown-map"
+        />
+      )}
+    </WebGLGuard>
   );
 }

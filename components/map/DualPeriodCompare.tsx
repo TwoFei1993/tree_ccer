@@ -5,6 +5,7 @@ import { Deck } from "@deck.gl/core";
 import type { FeatureCollection, Geometry } from "geojson";
 import type { TreeCrownProperties } from "@/lib/types/geo";
 import { buildTreeCrownExtrusionLayer } from "@/lib/map/deckLayers";
+import { WebGLGuard } from "@/components/map/WebGLGuard";
 
 const SHARED_VIEW_STATE = {
   longitude: 117.31,
@@ -54,7 +55,9 @@ function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string })
   return (
     <div className="flex-1">
       <div className="mb-2 text-center font-serif text-sm text-stone-600">{year}</div>
-      <div ref={containerRef} className="h-[45vh] w-full rounded-md border border-stone-300 bg-stone-50" />
+      <WebGLGuard heightClassName="h-[45vh]">
+        <div ref={containerRef} className="h-[45vh] w-full rounded-md border border-stone-300 bg-stone-50" />
+      </WebGLGuard>
     </div>
   );
 }

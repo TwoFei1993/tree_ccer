@@ -6,6 +6,7 @@ import { GeoJsonLayer } from "@deck.gl/layers";
 import type { Feature, FeatureCollection, Geometry, Polygon } from "geojson";
 import type { GridCarbonProperties } from "@/lib/types/geo";
 import { gridIdsToPoints, buildSamplePointsLayer } from "@/lib/map/samplePointsLayer";
+import { WebGLGuard } from "@/components/map/WebGLGuard";
 
 const GRID_VIEW_STATE = {
   longitude: 117.31,
@@ -98,10 +99,12 @@ export function GridSampleMap({
   }, [gridData, sampleGridIds, correctedSurfaceByGridId, minVal, maxVal, layerIdSuffix]);
 
   return (
-    <div
-      ref={containerRef}
-      className="h-[50vh] w-full rounded-md border border-stone-300 bg-stone-50"
-      data-testid="grid-sample-map"
-    />
+    <WebGLGuard heightClassName="h-[50vh]">
+      <div
+        ref={containerRef}
+        className="h-[50vh] w-full rounded-md border border-stone-300 bg-stone-50"
+        data-testid="grid-sample-map"
+      />
+    </WebGLGuard>
   );
 }
