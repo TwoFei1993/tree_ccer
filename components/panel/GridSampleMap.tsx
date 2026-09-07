@@ -61,29 +61,28 @@ export function GridSampleMap({
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
-    const canvasEl = document.createElement("canvas");
-    // 显式撑满父容器:canvas元素若不设CSS尺寸,其box就是浏览器默认的300x150物理属性值,
-    // 不会随父容器resize(luma.gl的ResizeObserver监听的是canvas自身的box,而非父容器),
-    // 导致WebGL视口和拾取坐标系永远停留在300x150,与实际显示区域完全错位。
-    canvasEl.style.width = "100%";
-    canvasEl.style.height = "100%";
-    canvasEl.style.display = "block";
+    // 不自己创建canvas再传给Deck:实测发现"canvas: 自建元素"这个prop在这个版本下并未被
+    // Deck真正采用于渲染——DOM里会同时出现我们自建的(空的)canvas和deck.gl内部另外创建
+    // 的(真正渲染用的)第二个canvas,我们手动做的resize/物理分辨率同步全部作用在错误的
+    // 那个canvas上,导致真实渲染的canvas从未跟上容器尺寸,画面完全错位。改用官方支持的
+    // `parent`prop,让Deck自己创建并管理canvas,之后用deck.getCanvas()取得它真正在用的
+    // 那个canvas元素来做resize同步,保证引用一致。
     const deck = new Deck({
-      canvas: canvasEl, // 直接把自己创建的canvas传给构造函数,之后用局部引用appendChild,不读deck.canvas(修复问题1)
+      parent: container,
       initialViewState: GRID_VIEW_STATE,
       controller: true,
       layers: [],
     });
-    container.appendChild(canvasEl);
     deckRef.current = deck;
 
-    // canvas的CSS box(canvas.style.width/height)确实随容器撑满了,但luma.gl内部靠自身
-    // ResizeObserver同步canvas.width/height这两个物理像素分辨率属性的机制在实测中并未
-    // 按预期触发(尤其是容器父级是CSS Grid布局时),导致WebGL drawing buffer停留在浏览器
-    // 默认的300x150不变,而deck.setProps({width,height})只会覆盖canvas.style.width/height
-    // (CSS渲染尺寸),同样不触碰物理分辨率。直接手动设置canvas.width/height物理属性(按
-    // devicePixelRatio换算保证清晰度)并调用deck.redraw(),完全绕开不可靠的内部机制。
+    // canvas的CSS box默认由Deck自身管理为'100%'(defaultProps.width/height),但luma.gl内部
+    // 靠自身ResizeObserver同步canvas.width/height这两个物理像素分辨率属性的机制在实测中
+    // 并未按预期触发(尤其是容器父级是CSS Grid布局时),导致WebGL drawing buffer停留在
+    // 浏览器默认的300x150不变。直接手动设置canvas.width/height物理属性(按devicePixelRatio
+    // 换算保证清晰度)并调用deck.redraw(),完全绕开不可靠的内部机制。
     const syncCanvasResolution = (width: number, height: number) => {
+      const canvasEl = deck.getCanvas();
+      if (!canvasEl) return;
       const dpr = window.devicePixelRatio || 1;
       canvasEl.width = Math.round(width * dpr);
       canvasEl.height = Math.round(height * dpr);
@@ -108,6 +107,11 @@ export function GridSampleMap({
       resizeObserver.disconnect();
       deck.finalize();
       deckRef.current = null;
+      // deck.finalize()只在this.canvas===this._ownedCanvas时才移除canvas,但实测在React
+      // 开发模式(effect因严格模式被挂载/卸载/重新挂载两次)下deck.gl留下了一个孤儿canvas
+      // 未被finalize()清理,导致容器里同时存在一个空的旧canvas和一个新建的真实渲染canvas,
+      // 我们的resize同步逻辑作用在错误的canvas上。挂载新实例前强制清空容器兜底。
+      container.innerHTML = "";
     };
   }, []);
 
