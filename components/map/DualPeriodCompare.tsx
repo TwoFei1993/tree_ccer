@@ -2,20 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Deck } from "@deck.gl/core";
+import { ZoomWidget } from "@deck.gl/widgets";
+import "@deck.gl/widgets/stylesheet.css";
 import type { FeatureCollection, Geometry } from "geojson";
 import type { TreeCrownProperties } from "@/lib/types/geo";
 import { buildTreeCrownExtrusionLayer } from "@/lib/map/deckLayers";
 import { WebGLGuard } from "@/components/map/WebGLGuard";
+import { fitBoundsViewState } from "@/lib/map/geoUtils";
 
-// zoom=17:研究区实际约500m x 500m,zoom=15(城市街区级)会让树冠在视觉上缩成几个像素,
-// 与TreeCrownMap.tsx使用同样修正后的zoom值,保持三处地图视角一致
-const SHARED_VIEW_STATE = {
-  longitude: 117.313,
-  latitude: 42.409,
-  zoom: 17,
-  pitch: 45,
-  bearing: 0,
-};
+const SHARED_PITCH = 45; // 倾斜2.5D视角,与TreeCrownMap一致
 
 function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -33,6 +28,13 @@ function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string })
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
+    const initialRectForView = container.getBoundingClientRect();
+    // 默认视角用fitBoundsViewState动态算出"全景"(撑满整个研究区),而不是硬编码固定zoom——
+    // 固定值只对某一个容器宽高比正确,响应式布局下会露出边距或裁掉研究区边缘。
+    const initialViewState = {
+      ...fitBoundsViewState(initialRectForView.width || 453, initialRectForView.height || 406),
+      pitch: SHARED_PITCH,
+    };
     // 不自己创建canvas再传给Deck:实测发现"canvas: 自建元素"这个prop在这个版本下并未被
     // Deck真正采用于渲染——DOM里会同时出现我们自建的(空的)canvas和deck.gl内部另外创建
     // 的(真正渲染用的)第二个canvas,我们手动做的resize/物理分辨率同步全部作用在错误的
@@ -41,9 +43,11 @@ function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string })
     // 那个canvas元素来做resize同步,保证引用一致。
     const deck = new Deck({
       parent: container,
-      initialViewState: SHARED_VIEW_STATE,
+      initialViewState,
       controller: true,
       layers: [],
+      // ZoomWidget加缩放按钮,与TreeCrownMap的NavigationControl视觉/交互一致
+      widgets: [new ZoomWidget({ placement: "top-right" })],
     });
     deckRef.current = deck;
 

@@ -3,20 +3,13 @@
 import { useEffect, useMemo, useRef } from "react";
 import { Deck } from "@deck.gl/core";
 import { GeoJsonLayer } from "@deck.gl/layers";
+import { ZoomWidget } from "@deck.gl/widgets";
+import "@deck.gl/widgets/stylesheet.css";
 import type { Feature, FeatureCollection, Geometry, Polygon } from "geojson";
 import type { GridCarbonProperties } from "@/lib/types/geo";
 import { gridIdsToPoints, buildSamplePointsLayer } from "@/lib/map/samplePointsLayer";
 import { WebGLGuard } from "@/components/map/WebGLGuard";
-
-// zoom=17:研究区实际约500m x 500m,zoom=15(城市街区级)会让网格/采样点在视觉上过小,
-// 与TreeCrownMap.tsx/DualPeriodCompare.tsx使用同样修正后的zoom值,保持三处地图视角一致
-const GRID_VIEW_STATE = {
-  longitude: 117.313,
-  latitude: 42.409,
-  zoom: 17,
-  pitch: 0, // 网格分辨率图层用纯俯视,与首屏单木倾斜视角区分,避免混淆两种不同精度的可视化
-  bearing: 0,
-};
+import { fitBoundsViewState } from "@/lib/map/geoUtils";
 
 interface GridSampleMapProps {
   gridData: FeatureCollection<Polygon, GridCarbonProperties>;
@@ -61,6 +54,13 @@ export function GridSampleMap({
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
+    const initialRectForView = container.getBoundingClientRect();
+    // 默认视角用fitBoundsViewState动态算出"全景"(撑满整个研究区),而不是硬编码固定zoom——
+    // 固定值只对某一个容器宽高比正确,响应式布局下会露出边距或裁掉研究区边缘。
+    const initialViewState = fitBoundsViewState(
+      initialRectForView.width || 580,
+      initialRectForView.height || 453,
+    );
     // 不自己创建canvas再传给Deck:实测发现"canvas: 自建元素"这个prop在这个版本下并未被
     // Deck真正采用于渲染——DOM里会同时出现我们自建的(空的)canvas和deck.gl内部另外创建
     // 的(真正渲染用的)第二个canvas,我们手动做的resize/物理分辨率同步全部作用在错误的
@@ -69,9 +69,11 @@ export function GridSampleMap({
     // 那个canvas元素来做resize同步,保证引用一致。
     const deck = new Deck({
       parent: container,
-      initialViewState: GRID_VIEW_STATE,
+      initialViewState,
       controller: true,
       layers: [],
+      // ZoomWidget加缩放按钮,与TreeCrownMap的NavigationControl视觉/交互一致
+      widgets: [new ZoomWidget({ placement: "top-right" })],
     });
     deckRef.current = deck;
 

@@ -3,23 +3,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MapboxOverlay } from "@deck.gl/mapbox";
 import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 import type { FeatureCollection, Geometry } from "geojson";
 import type { TreeCrownProperties } from "@/lib/types/geo";
 import { buildTreeCrownExtrusionLayer } from "@/lib/map/deckLayers";
 import { MapSkeleton } from "@/components/ui/MapSkeleton";
 import { WebGLGuard } from "@/components/map/WebGLGuard";
+import { RESEARCH_AREA_BOUNDS } from "@/lib/map/geoUtils";
 
-// 塞罕坝研究区中心点(WGS84经纬度,据事实核对表UTM边界换算的大致中心)。
-// 研究区实际范围约500m x 500m(经度跨度~0.006°,纬度跨度~0.0046°),zoom=15是城市街区级
-// 精度、对这个尺度太粗——树冠图层会缩小到几个像素,视觉上被demotiles底图的陆地填色完全
-// 淹没(实测确认:zoom=15/pitch=45下树冠色阶像素占比<1%,zoom=17/pitch=0下占比62%)。
-const INITIAL_VIEW_STATE = {
-  longitude: 117.313,
-  latitude: 42.409,
-  zoom: 17,
-  pitch: 45, // 倾斜2.5D视角,对应设计文档"倾斜俯视+挤出高度"
-  bearing: 0,
-};
+// 用fitBounds让初始视角精确撑满整个研究区("默认全景"),而不是用手动猜测的固定zoom值近似
+// ——避免不同容器宽高比下研究区被裁掉一部分。边界坐标定义在geoUtils.ts,三处地图组件共用。
+const INITIAL_PITCH = 45; // 倾斜2.5D视角,对应设计文档"倾斜俯视+挤出高度"
+const INITIAL_BEARING = 0;
 
 interface TreeCrownMapProps {
   overviewGeoJsonUrl: string;
@@ -53,14 +48,25 @@ export function TreeCrownMap({ overviewGeoJsonUrl }: TreeCrownMapProps) {
   useEffect(() => {
     if (!mapContainerEl) return;
 
+    // 构造时不传pitch:MapLibre的bounds/fitBoundsOptions在计算"恰好装下边界"的zoom时,
+    // 并未正确考虑pitch(倾斜视角下同一段地面在屏幕上投影更小,实测zoom=45°倾斜时算出的
+    // zoom比pitch=0时保守了近2个级别,导致研究区只占了视口一小部分——这是MapLibre/
+    // Mapbox-gl的已知限制,fitBounds系列API不支持带pitch精确计算)。先在pitch=0下让
+    // fitBounds算出正确撑满边界的zoom,地图加载完成后再单独setPitch(45)切换倾斜视角,
+    // 这样倾斜后的"视觉全景"效果才跟俯视时的边界框保持一致(2.5D倾斜下自然会露出一些
+    // 边界外的地面,这是符合预期的透视效果,不是裁剪问题)。
     const map = new maplibregl.Map({
       container: mapContainerEl,
       style: "https://demotiles.maplibre.org/style.json",
-      center: [INITIAL_VIEW_STATE.longitude, INITIAL_VIEW_STATE.latitude],
-      zoom: INITIAL_VIEW_STATE.zoom,
-      pitch: INITIAL_VIEW_STATE.pitch,
-      bearing: INITIAL_VIEW_STATE.bearing,
+      pitch: 0,
+      bearing: INITIAL_BEARING,
+      bounds: RESEARCH_AREA_BOUNDS,
+      fitBoundsOptions: { padding: 20 }, // 留一点边距,避免树冠贴着容器边缘裁切
     });
+    map.setPitch(INITIAL_PITCH);
+
+    // 缩放按钮(NavigationControl):默认视角已经是fitBounds撑满全景,专家仍可能想放大看单株细节
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
 
     // MapboxOverlay作为MapLibre的IControl添加,deck.gl图层与底图共享同一个canvas和视角状态,
     // 不再需要手动同步viewState,也不需要自己创建/挂载canvas
