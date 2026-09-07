@@ -100,24 +100,35 @@ export function ParameterPanel({
           ))}
         </select>
         {priorModelComparison.length > 0 && (
-          <div className="mt-3 space-y-1.5">
+          <div className="mt-3 space-y-2">
             <p className="text-xs text-stone-500">
               固定校准集规模 n=200、监测样本量 k={priorModelK} 下四种配置的改善幅度均值对比
               （跨5个独立校准种子）：
             </p>
-            {priorModelComparison.map((item) => (
-              <div
-                key={item.name}
-                className={`flex items-center justify-between rounded px-2 py-1 text-xs ${
-                  item.name === selectedPriorModel
-                    ? "bg-emerald-100 font-semibold text-emerald-900"
-                    : "text-stone-600"
-                }`}
-              >
-                <span className="truncate pr-2">{item.name}</span>
-                <span className="shrink-0 tabular-nums">{item.improvementMeanPct.toFixed(1)}%</span>
-              </div>
-            ))}
+            {priorModelComparison.map((item) => {
+              const isSelected = item.name === selectedPriorModel;
+              const widthPct = Math.max(2, Math.min(100, item.improvementMeanPct));
+              return (
+                <div key={item.name} className="text-xs">
+                  <div
+                    className={`mb-0.5 flex items-center justify-between ${
+                      isSelected ? "font-semibold text-emerald-900" : "text-stone-600"
+                    }`}
+                  >
+                    <span className="truncate pr-2">{item.name}</span>
+                    <span className="shrink-0 tabular-nums">{item.improvementMeanPct.toFixed(1)}%</span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-stone-200">
+                    <div
+                      className={`h-full rounded-full transition-all duration-300 ${
+                        isSelected ? "bg-emerald-700" : "bg-stone-400"
+                      }`}
+                      style={{ width: `${widthPct}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

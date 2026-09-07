@@ -35,6 +35,9 @@ function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string })
       ...fitBoundsViewState(initialRectForView.width || 453, initialRectForView.height || 406),
       pitch: SHARED_PITCH,
     };
+    // 用户是否已经手动拖动/缩放过地图——一旦交互过,resize不应再强行把镜头拉回fitBounds,
+    // 否则窗口大小发生任何变化(哪怕只是滚动条出现导致的1px抖动)都会把用户刚调好的视角冲掉。
+    const hasUserInteractedRef = { current: false };
     // 不自己创建canvas再传给Deck:实测发现"canvas: 自建元素"这个prop在这个版本下并未被
     // Deck真正采用于渲染——DOM里会同时出现我们自建的(空的)canvas和deck.gl内部另外创建
     // 的(真正渲染用的)第二个canvas,我们手动做的resize/物理分辨率同步全部作用在错误的
@@ -48,6 +51,16 @@ function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string })
       layers: [],
       // ZoomWidget加缩放按钮,与TreeCrownMap的NavigationControl视觉/交互一致
       widgets: [new ZoomWidget({ placement: "top-right" })],
+      onViewStateChange: ({ interactionState }) => {
+        if (
+          interactionState?.isDragging ||
+          interactionState?.isPanning ||
+          interactionState?.isZooming ||
+          interactionState?.isRotating
+        ) {
+          hasUserInteractedRef.current = true;
+        }
+      },
     });
     deckRef.current = deck;
 
@@ -56,13 +69,29 @@ function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string })
     // 并未按预期触发(尤其是容器父级是CSS Grid布局时),导致WebGL drawing buffer停留在
     // 浏览器默认的300x150不变。直接手动设置canvas.width/height物理属性(按devicePixelRatio
     // 换算保证清晰度)并调用deck.redraw(),完全绕开不可靠的内部机制。
+    //
+    // 光同步分辨率不够:容器在挂载瞬间(骨架屏刚消失、字体/布局还没最终稳定)测到的尺寸,
+    // 跟浏览器最终稳定布局后的真实尺寸经常不一样(实测偏差可达上百像素)。initialViewState
+    // 的经纬度中心/zoom是按挂载瞬间那个尺寸算出来的一次性快照,后续resize只改了canvas
+    // 物理分辨率却没有重新fitBounds,导致镜头依然按旧尺寸的比例取景——真实画面在新尺寸的
+    // 容器里就会显得偏移/挤到一角(这正是"双期对比图挤在下方"的根因)。所以每次resize都要
+    // 重新算一次fitBounds并显式setProps({initialViewState})覆盖镜头,直到用户开始手动交互
+    // 为止(交互之后不再自动纠正,尊重用户已调整好的视角)。
     const syncCanvasResolution = (width: number, height: number) => {
       const canvasEl = deck.getCanvas();
       if (!canvasEl) return;
       const dpr = window.devicePixelRatio || 1;
       canvasEl.width = Math.round(width * dpr);
       canvasEl.height = Math.round(height * dpr);
-      deck.setProps({ width, height });
+      if (hasUserInteractedRef.current) {
+        deck.setProps({ width, height });
+      } else {
+        deck.setProps({
+          width,
+          height,
+          initialViewState: { ...fitBoundsViewState(width, height), pitch: SHARED_PITCH },
+        });
+      }
       deck.redraw();
     };
     const resizeObserver = new ResizeObserver((entries) => {
