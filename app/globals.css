@@ -19,8 +19,32 @@
   }
 }
 
+@theme {
+  --color-paper: #faf9f5;
+  --color-ink: #292722;
+  --color-forest-deep: #2d5a2d;
+  --color-forest-light: #d4e0c7;
+  /* 原计划用next/font/google引入Noto Serif SC自托管衬线字体,但该字体是CJK子集
+     (需要多个分片woff2请求),在本开发环境里next/font/google的构建期抓取稳定失败
+     并导致dev server 500报错(curl/纯Node.js请求同一URL均成功,问题出在Next.js
+     内部字体加载器本身的网络行为,非本项目代码可控)。改为纯CSS字体回退链:
+     不依赖任何构建期网络请求,直接使用操作系统/浏览器自带的衬线字体
+     (macOS/iOS的Songti SC、Windows的SimSun、Linux常见的Noto Serif CJK,
+     兜底到通用serif),视觉上同样是衬线风格,满足学术报告基调的设计意图。
+     若后续部署环境网络正常,可改回next/font/google自托管Noto Serif SC。 */
+  --font-serif-academic: Georgia, "Songti SC", "SimSun", "Noto Serif CJK SC", serif;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-serif-academic);
+}
+
+/* 图注编号样式,呼应设计文档"规范图注编号"要求 */
+.figure-caption {
+  font-size: 0.8rem;
+  color: #78716c;
+  text-align: center;
+  margin-top: 0.5rem;
 }
