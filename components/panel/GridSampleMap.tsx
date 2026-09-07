@@ -145,7 +145,7 @@ export function GridSampleMap({
     <WebGLGuard heightClassName="h-[50vh]">
       <div
         ref={containerRef}
-        className="h-[50vh] w-full rounded-md border border-stone-300 bg-stone-50"
+        className="relative h-[50vh] w-full overflow-hidden rounded-md border border-stone-300 bg-stone-50"
         data-testid="grid-sample-map"
       />
     </WebGLGuard>

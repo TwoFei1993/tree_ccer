@@ -101,7 +101,10 @@ function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string })
     <div className="flex-1">
       <div className="mb-2 text-center font-serif text-sm text-stone-600">{year}</div>
       <WebGLGuard heightClassName="h-[45vh]">
-        <div ref={containerRef} className="h-[45vh] w-full rounded-md border border-stone-300 bg-stone-50" />
+        <div
+          ref={containerRef}
+          className="relative h-[45vh] w-full overflow-hidden rounded-md border border-stone-300 bg-stone-50"
+        />
       </WebGLGuard>
     </div>
   );

@@ -5,6 +5,10 @@ import { ParameterPanel } from "../ParameterPanel";
 const K_GRID = [30, 50, 80, 120, 200];
 const CAL_SIZE_GRID = [150, 200, 250, 300];
 const PRIOR_MODEL_NAMES = ["当前方案: 二次多项式+卫星光谱", "方向A: 随机森林+卫星光谱"];
+const PRIOR_MODEL_COMPARISON = [
+  { name: PRIOR_MODEL_NAMES[0], improvementMeanPct: 47.8 },
+  { name: PRIOR_MODEL_NAMES[1], improvementMeanPct: 52.3 },
+];
 
 describe("ParameterPanel", () => {
   it("renders current k and calibration size values", () => {
@@ -19,6 +23,8 @@ describe("ParameterPanel", () => {
         onKChange={vi.fn()}
         onCalSizeChange={vi.fn()}
         onPriorModelChange={vi.fn()}
+        priorModelComparison={[]}
+        priorModelK={80}
       />
     );
     expect(screen.getByText(/80/)).toBeInTheDocument();
@@ -38,6 +44,8 @@ describe("ParameterPanel", () => {
         onKChange={onKChange}
         onCalSizeChange={vi.fn()}
         onPriorModelChange={vi.fn()}
+        priorModelComparison={PRIOR_MODEL_COMPARISON}
+        priorModelK={80}
       />
     );
     const kSlider = screen.getByLabelText(/监测样本量/);
@@ -58,9 +66,31 @@ describe("ParameterPanel", () => {
         onKChange={vi.fn()}
         onCalSizeChange={vi.fn()}
         onPriorModelChange={onPriorModelChange}
+        priorModelComparison={PRIOR_MODEL_COMPARISON}
+        priorModelK={80}
       />
     );
     fireEvent.change(screen.getByLabelText(/先验模型/), { target: { value: PRIOR_MODEL_NAMES[1] } });
     expect(onPriorModelChange).toHaveBeenCalledWith(PRIOR_MODEL_NAMES[1]);
+  });
+
+  it("shows the improvement comparison for each prior model option, highlighting the selected one", () => {
+    render(
+      <ParameterPanel
+        kGrid={K_GRID}
+        calSizeGrid={CAL_SIZE_GRID}
+        priorModelNames={PRIOR_MODEL_NAMES}
+        selectedK={80}
+        selectedCalSize={200}
+        selectedPriorModel={PRIOR_MODEL_NAMES[1]}
+        onKChange={vi.fn()}
+        onCalSizeChange={vi.fn()}
+        onPriorModelChange={vi.fn()}
+        priorModelComparison={PRIOR_MODEL_COMPARISON}
+        priorModelK={80}
+      />
+    );
+    expect(screen.getByText(/47\.8%/)).toBeInTheDocument();
+    expect(screen.getByText(/52\.3%/)).toBeInTheDocument();
   });
 });

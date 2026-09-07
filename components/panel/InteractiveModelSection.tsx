@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { FeatureCollection, Polygon } from "geojson";
-import { useScenarioLibrary, findScenario } from "@/lib/hooks/useScenarioLibrary";
+import { useScenarioLibrary, findScenario, findNearestKOnGrid } from "@/lib/hooks/useScenarioLibrary";
 import { ParameterPanel } from "./ParameterPanel";
 import { ScenarioMetricsCard } from "./ScenarioMetricsCard";
 import { GridSampleMap } from "./GridSampleMap";
@@ -40,6 +40,27 @@ export function InteractiveModelSection() {
     [kCalSizeScenarios]
   );
   const priorModelNames = useMemo(() => priorModelScenarios.map((s) => s.config_name), [priorModelScenarios]);
+
+  // scenarios_prior_models.json的k是独立于k×校准集规模网格的离散集合(见build_scenario_prior_models.py
+  // K_LIST_DEFAULT=[30,50,80,120,200]),不是k滑块此刻选中的任意值——把滑块的selectedK吸附到
+  // 这组离散k上,让四模型对比数字始终对应一个真实预计算过的k,而不是猜一个不存在的组合。
+  const priorModelKGrid = useMemo(
+    () =>
+      priorModelScenarios.length > 0
+        ? Array.from(new Set(Object.keys(priorModelScenarios[0].per_k).map(Number))).sort((a, b) => a - b)
+        : [],
+    [priorModelScenarios]
+  );
+  const priorModelK =
+    priorModelKGrid.length > 0 ? findNearestKOnGrid(priorModelKGrid, selectedK) : selectedK;
+  const priorModelComparison = useMemo(
+    () =>
+      priorModelScenarios.map((s) => ({
+        name: s.config_name,
+        improvementMeanPct: s.per_k[String(priorModelK)]?.improvement_mean_pct ?? 0,
+      })),
+    [priorModelScenarios, priorModelK]
+  );
 
   const activeScenario = useMemo(
     () => findScenario(kCalSizeScenarios, selectedK, selectedCalSize),
@@ -84,6 +105,8 @@ export function InteractiveModelSection() {
           onKChange={setSelectedK}
           onCalSizeChange={setSelectedCalSize}
           onPriorModelChange={setSelectedPriorModel}
+          priorModelComparison={priorModelComparison}
+          priorModelK={priorModelK}
         />
         <ScenarioMetricsCard scenario={activeScenario} />
       </div>
