@@ -8,10 +8,12 @@ import type { GridCarbonProperties } from "@/lib/types/geo";
 import { gridIdsToPoints, buildSamplePointsLayer } from "@/lib/map/samplePointsLayer";
 import { WebGLGuard } from "@/components/map/WebGLGuard";
 
+// zoom=17:研究区实际约500m x 500m,zoom=15(城市街区级)会让网格/采样点在视觉上过小,
+// 与TreeCrownMap.tsx/DualPeriodCompare.tsx使用同样修正后的zoom值,保持三处地图视角一致
 const GRID_VIEW_STATE = {
-  longitude: 117.31,
-  latitude: 42.408,
-  zoom: 15,
+  longitude: 117.313,
+  latitude: 42.409,
+  zoom: 17,
   pitch: 0, // 网格分辨率图层用纯俯视,与首屏单木倾斜视角区分,避免混淆两种不同精度的可视化
   bearing: 0,
 };
@@ -58,17 +60,52 @@ export function GridSampleMap({
   // 挂载时创建一次Deck实例,依赖数组为[],之后永远复用同一个实例(修复问题2)
   useEffect(() => {
     if (!containerRef.current) return;
+    const container = containerRef.current;
     const canvasEl = document.createElement("canvas");
+    // 显式撑满父容器:canvas元素若不设CSS尺寸,其box就是浏览器默认的300x150物理属性值,
+    // 不会随父容器resize(luma.gl的ResizeObserver监听的是canvas自身的box,而非父容器),
+    // 导致WebGL视口和拾取坐标系永远停留在300x150,与实际显示区域完全错位。
+    canvasEl.style.width = "100%";
+    canvasEl.style.height = "100%";
+    canvasEl.style.display = "block";
     const deck = new Deck({
       canvas: canvasEl, // 直接把自己创建的canvas传给构造函数,之后用局部引用appendChild,不读deck.canvas(修复问题1)
       initialViewState: GRID_VIEW_STATE,
       controller: true,
       layers: [],
     });
-    containerRef.current.appendChild(canvasEl);
+    container.appendChild(canvasEl);
     deckRef.current = deck;
 
+    // canvas的CSS box(canvas.style.width/height)确实随容器撑满了,但luma.gl内部靠自身
+    // ResizeObserver同步canvas.width/height这两个物理像素分辨率属性的机制在实测中并未
+    // 按预期触发(尤其是容器父级是CSS Grid布局时),导致WebGL drawing buffer停留在浏览器
+    // 默认的300x150不变,而deck.setProps({width,height})只会覆盖canvas.style.width/height
+    // (CSS渲染尺寸),同样不触碰物理分辨率。直接手动设置canvas.width/height物理属性(按
+    // devicePixelRatio换算保证清晰度)并调用deck.redraw(),完全绕开不可靠的内部机制。
+    const syncCanvasResolution = (width: number, height: number) => {
+      const dpr = window.devicePixelRatio || 1;
+      canvasEl.width = Math.round(width * dpr);
+      canvasEl.height = Math.round(height * dpr);
+      deck.setProps({ width, height });
+      deck.redraw();
+    };
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const { width, height } = entry.contentRect;
+      syncCanvasResolution(width, height);
+    });
+    resizeObserver.observe(container);
+    // ResizeObserver的第一次callback是异步的(下一帧才触发),初始挂载时先用当前的
+    // getBoundingClientRect同步设置一次,避免第一帧渲染仍停留在默认300x150。
+    const initialRect = container.getBoundingClientRect();
+    if (initialRect.width > 0 && initialRect.height > 0) {
+      syncCanvasResolution(initialRect.width, initialRect.height);
+    }
+
     return () => {
+      resizeObserver.disconnect();
       deck.finalize();
       deckRef.current = null;
     };
