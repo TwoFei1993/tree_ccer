@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 塞罕坝碳汇 MRV 空间误差抽样研究 — 专家评审网站
 
-## Getting Started
+纯静态 Next.js 网站，用于向评审专家展示研究结论、交互式模型参数面板与真实树冠地图。
 
-First, run the development server:
+## 本地开发
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 重新生成预计算数据（若原始数据/notebook逻辑有更新）
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+bash scripts/setup_data_pipeline.sh   # 首次运行,创建Python虚拟环境
+bash scripts/run_data_pipeline.sh     # 重新跑数据管线,同步到 public/data/
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 构建静态导出
 
-## Learn More
+```bash
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+产物在 `out/` 目录，是完全独立的静态文件集合。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 部署为私有链接（不公开索引）
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+推荐用 Vercel：
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. 在 Vercel 控制台新建项目，关联本仓库（或用 `vercel` CLI 从本地直接部署 `out/` 目录）。
+2. 部署完成后，Vercel 默认生成的 `*.vercel.app` 域名不会被搜索引擎主动收录，可直接作为私有链接分享给评审专家。
+3. 如需进一步限制访问，可在 Vercel 项目设置中开启 "Password Protection"（付费计划功能）或改用其他支持访问密码的静态托管平台。
+4. 不要在任何公开渠道（如个人博客、公开GitHub仓库的README）中链接该部署地址。
