@@ -24,11 +24,14 @@ OVERVIEW_PROPS = ["top_h_m", "Carbon_kg"]
 # 实测:0.3米容差+完整KEEP_PROPS+默认坐标精度时,2018年概览层达10MB,远超2MB目标;
 # 几何简化在容差>=2米后已收敛到每棵树最少顶点数(约6个点/树,量级已到底),
 # 光靠加大容差无法继续压缩,故同时:(a)概览层只保留渲染实际用到的2个属性字段,
-# (b)导出GeoJSON时用GDAL原生COORDINATE_PRECISION=5(约1.1米精度,仍小于树冠
-# 中位直径~5米,不会造成可见形变)截断坐标小数位数,两者叠加后2018/2024概览层
-# 分别约2.3MB/2.0MB,比默认写法(24MB/21MB)缩小约90%,足够接近2MB目标。
+# (b)导出GeoJSON时用GDAL原生COORDINATE_PRECISION截断坐标小数位数进一步压缩体积。
+# 精度取6位小数(约11厘米)而非5位(约1.1米):实测精度=5时会让约1%的树(简化后
+# 本身顶点已经很少的小树冠)在坐标截断阶段进一步坍缩成不足3个不同顶点的退化多边形
+# (deck.gl会打印"Polygon coordinates are malformed"警告,虽不崩溃但这些树在首屏
+# 不会正确渲染);精度=6完全消除了这一退化(已用真实数据验证0处退化),
+# 代价仅是文件体积从约2.3MB/2.0MB增至约2.6MB/2.1MB,增量可忽略。
 OVERVIEW_SIMPLIFY_TOLERANCE_M = 2.0
-OVERVIEW_COORDINATE_PRECISION = 5
+OVERVIEW_COORDINATE_PRECISION = 6
 
 
 def export_tree_crowns_for_year(year: int, shp_path: str, grid_shp_path: str, out_dir: Path):
