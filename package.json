@@ -20,7 +20,8 @@
     "next": "15.4.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-map-gl": "^7.1.9"
+    "react-map-gl": "^7.1.9",
+    "recharts": "^2.15.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

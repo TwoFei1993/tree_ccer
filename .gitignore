@@ -42,7 +42,9 @@ next-env.d.ts
 
 # data pipeline
 data-pipeline/.venv/
-data-pipeline/output/*.tmp
+data-pipeline/output/
+data-pipeline/**/__pycache__/
+data-pipeline/.pytest_cache/
 
 # large source data (not committed, precomputed output only)
 public/data/raw-cache/
