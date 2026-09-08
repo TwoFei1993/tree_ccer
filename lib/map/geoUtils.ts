@@ -21,12 +21,19 @@ export const RESEARCH_AREA_BOUNDS: [[number, number], [number, number]] = [
 ];
 
 /** 用WebMercatorViewport.fitBounds()算出恰好撑满研究区边界的viewState(纯deck.gl实例专用,
- * 没有MapLibre的fitBounds便捷API)。容器尺寸变化时应重新调用,保持"默认全景"跟随resize。 */
+ * 没有MapLibre的fitBounds便捷API)。容器尺寸变化时应重新调用,保持"默认全景"跟随resize。
+ *
+ * padding支持上下不对称:fitBounds本身在pitch=0下算出的是"内容在画面里垂直居中"的镜头,
+ * 但deck.gl的透视相机把镜头维持在target点(经纬度中心)为屏幕中心不变,pitch=45这类倾斜视角
+ * 叠加上去之后,画面的可视范围会整体往上/下偏——需要显式的上下不对称padding把fitBounds算出的
+ * "居中"目标点主动往下移一点,倾斜之后视觉内容才会落在画面更靠上的位置,贴近上方的年份标签。
+ * (对应人工反馈:"图片整个往上移,移到2018/2024下面的格子那边"——单一数字padding做不到这种偏移,
+ * 必须让top/bottom不一样才能主动推动镶嵌位置,而不是被动等透视效果自己居中。) */
 export function fitBoundsViewState(
   width: number,
   height: number,
   bounds: [[number, number], [number, number]] = RESEARCH_AREA_BOUNDS,
-  padding = 20,
+  padding: number | { top: number; bottom: number; left: number; right: number } = 20,
 ): { longitude: number; latitude: number; zoom: number; pitch: number; bearing: number } {
   const viewport = new WebMercatorViewport({ width, height });
   const { longitude, latitude, zoom } = viewport.fitBounds(bounds, { padding });

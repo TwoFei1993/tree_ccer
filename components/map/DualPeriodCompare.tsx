@@ -12,6 +12,16 @@ import { fitBoundsViewState } from "@/lib/map/geoUtils";
 
 const SHARED_PITCH = 45; // 倾斜2.5D视角,与TreeCrownMap一致
 
+/** pitch=45的倾斜相机下,fitBounds按pitch=0算出的"垂直居中"镜头在倾斜之后会在画面顶/底留出
+ * 大小不等的空白(倾斜视角本身不会自动把内容推到某一侧,是相机看向的目标点始终位于屏幕
+ * 正中心决定的)。人工反馈明确要求内容贴着面板顶部(紧挨"2018/2024"年份标签下方)而不是
+ * 上下留白均匀分布,所以用不对称padding主动把fitBounds算出的目标点往下移——bottom padding
+ * 越大,目标点被推得越靠上,画面内容就相应贴近顶部。用height的比例而不是固定像素值,
+ * 保证在45vh面板高度变化(不同浏览器窗口高度)时,顶部留白/底部留白的比例保持一致。 */
+function panelPadding(height: number) {
+  return { top: Math.max(5, height * 0.02), bottom: height * 0.45, left: 20, right: 20 };
+}
+
 function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const deckRef = useRef<Deck | null>(null);
@@ -31,8 +41,14 @@ function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string })
     const initialRectForView = container.getBoundingClientRect();
     // 默认视角用fitBoundsViewState动态算出"全景"(撑满整个研究区),而不是硬编码固定zoom——
     // 固定值只对某一个容器宽高比正确,响应式布局下会露出边距或裁掉研究区边缘。
+    const initialRectHeight = initialRectForView.height || 406;
     const initialViewState = {
-      ...fitBoundsViewState(initialRectForView.width || 453, initialRectForView.height || 406),
+      ...fitBoundsViewState(
+        initialRectForView.width || 453,
+        initialRectHeight,
+        undefined,
+        panelPadding(initialRectHeight),
+      ),
       pitch: SHARED_PITCH,
     };
     // 用户是否已经手动拖动/缩放过地图——一旦交互过,resize不应再强行把镜头拉回fitBounds,
@@ -89,7 +105,10 @@ function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string })
         deck.setProps({
           width,
           height,
-          initialViewState: { ...fitBoundsViewState(width, height), pitch: SHARED_PITCH },
+          initialViewState: {
+            ...fitBoundsViewState(width, height, undefined, panelPadding(height)),
+            pitch: SHARED_PITCH,
+          },
         });
       }
       deck.redraw();
