@@ -6,7 +6,7 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { FeatureCollection, Geometry } from "geojson";
 import type { TreeCrownProperties } from "@/lib/types/geo";
-import { buildTreeCrownExtrusionLayer } from "@/lib/map/deckLayers";
+import { buildTreeCrownExtrusionLayer, buildTreeCrownLightingEffect } from "@/lib/map/deckLayers";
 import { MapSkeleton } from "@/components/ui/MapSkeleton";
 import { WebGLGuard } from "@/components/map/WebGLGuard";
 import { RESEARCH_AREA_BOUNDS } from "@/lib/map/geoUtils";
@@ -70,7 +70,11 @@ export function TreeCrownMap({ overviewGeoJsonUrl }: TreeCrownMapProps) {
 
     // MapboxOverlay作为MapLibre的IControl添加,deck.gl图层与底图共享同一个canvas和视角状态,
     // 不再需要手动同步viewState,也不需要自己创建/挂载canvas
-    const overlay = new MapboxOverlay({ interleaved: true, layers: [] });
+    const overlay = new MapboxOverlay({
+      interleaved: true,
+      layers: [],
+      effects: [buildTreeCrownLightingEffect()], // 方向光让挤出的树冠群产生阴影层次,不是一片平涂色块
+    });
     map.addControl(overlay as unknown as maplibregl.IControl);
     map.once("load", () => setMapLoaded(true));
 

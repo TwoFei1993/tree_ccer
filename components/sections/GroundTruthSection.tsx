@@ -99,7 +99,7 @@ export function GroundTruthSection() {
             height={450}
             className="rounded-md border border-stone-300"
           />
-          <p className="figure-caption">图 4 · DBH换算公式观测值与预测值对比（交叉验证）</p>
+          <p className="figure-caption">图 5 · DBH换算公式观测值与预测值对比（交叉验证）</p>
         </figure>
         <figure>
           <Image
@@ -109,7 +109,7 @@ export function GroundTruthSection() {
             height={450}
             className="rounded-md border border-stone-300"
           />
-          <p className="figure-caption">图 5 · DBH换算公式残差诊断</p>
+          <p className="figure-caption">图 6 · DBH换算公式残差诊断</p>
         </figure>
       </div>
     </section>

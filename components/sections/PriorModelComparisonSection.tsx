@@ -41,14 +41,14 @@ export function PriorModelComparisonSection() {
             <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
             <XAxis dataKey="k" stroke="#78716c" fontSize={12} />
             <YAxis stroke="#78716c" fontSize={12} unit="%" />
-            <Tooltip />
+            <Tooltip formatter={(value) => `${Number(value).toFixed(2)}%`} />
             <Legend wrapperStyle={{ fontSize: 12 }} />
             {scenarios.map((sc, i) => (
               <Bar key={sc.config_name} dataKey={sc.config_name} fill={COLORS[i % COLORS.length]} />
             ))}
           </BarChart>
         </ResponsiveContainer>
-        <p className="figure-caption">图 3 · 四种先验模型配置的改善幅度均值对比（跨5个独立校准种子）</p>
+        <p className="figure-caption">图 4 · 四种先验模型配置的改善幅度均值对比（跨5个独立校准种子）</p>
       </div>
     </section>
   );

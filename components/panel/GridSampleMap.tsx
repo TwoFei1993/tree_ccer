@@ -35,6 +35,17 @@ function surfaceValueToColor(value: number, minVal: number, maxVal: number): [nu
   ];
 }
 
+/** 图例条渲染用:在色阶两端之间取N个采样点生成CSS linear-gradient的色标列表,
+ * 与surfaceValueToColor的插值方式完全一致,保证图例条颜色和地图上实际渲染的颜色一一对应。 */
+function surfaceColorScaleCss(): string {
+  const stops = 8;
+  const colors = Array.from({ length: stops }, (_, i) => {
+    const [r, g, b] = surfaceValueToColor(i / (stops - 1), 0, 1);
+    return `rgb(${r},${g},${b})`;
+  });
+  return `linear-gradient(to right, ${colors.join(", ")})`;
+}
+
 export function GridSampleMap({
   gridData,
   sampleGridIds,
@@ -167,12 +178,23 @@ export function GridSampleMap({
   }, [gridData, sampleGridIds, correctedSurfaceByGridId, minVal, maxVal, layerIdSuffix]);
 
   return (
-    <WebGLGuard heightClassName="h-[50vh]">
-      <div
-        ref={containerRef}
-        className="relative h-[50vh] w-full overflow-hidden rounded-md border border-stone-300 bg-stone-50"
-        data-testid="grid-sample-map"
-      />
-    </WebGLGuard>
+    <div>
+      <WebGLGuard heightClassName="h-[50vh]">
+        <div
+          ref={containerRef}
+          className="relative h-[50vh] w-full overflow-hidden rounded-md border border-stone-300 bg-stone-50"
+          data-testid="grid-sample-map"
+        />
+      </WebGLGuard>
+      <div className="mt-2 flex items-center gap-2 text-xs text-stone-600">
+        <span>Kriging修正后碳汇增量估计值（t C/ha）：</span>
+        <span>{minVal.toFixed(1)}</span>
+        <div
+          className="h-3 flex-1 rounded-sm border border-stone-300"
+          style={{ background: surfaceColorScaleCss() }}
+        />
+        <span>{maxVal.toFixed(1)}</span>
+      </div>
+    </div>
   );
 }

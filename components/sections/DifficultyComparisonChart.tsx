@@ -62,7 +62,7 @@ export function DifficultyComparisonChart() {
         </div>
       </div>
       <p className="figure-caption">
-        图 2 · 碳储量（存量）与碳汇增量（ΔC）的估计难度对比：变异系数相差12倍，遥感解释力相差21倍
+        图 3 · 碳储量（存量）与碳汇增量（ΔC）的估计难度对比：变异系数相差12倍，遥感解释力相差21倍
       </p>
     </div>
   );

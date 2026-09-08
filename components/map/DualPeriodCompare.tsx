@@ -6,7 +6,7 @@ import { ZoomWidget } from "@deck.gl/widgets";
 import "@deck.gl/widgets/stylesheet.css";
 import type { FeatureCollection, Geometry } from "geojson";
 import type { TreeCrownProperties } from "@/lib/types/geo";
-import { buildTreeCrownExtrusionLayer } from "@/lib/map/deckLayers";
+import { buildTreeCrownExtrusionLayer, buildTreeCrownLightingEffect } from "@/lib/map/deckLayers";
 import { WebGLGuard } from "@/components/map/WebGLGuard";
 import { fitBoundsViewState } from "@/lib/map/geoUtils";
 
@@ -65,6 +65,7 @@ function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string })
       initialViewState,
       controller: true,
       layers: [],
+      effects: [buildTreeCrownLightingEffect()], // 与TreeCrownMap同一套光照,保证两期对比视觉基调一致
       // ZoomWidget加缩放按钮,与TreeCrownMap的NavigationControl视觉/交互一致
       widgets: [new ZoomWidget({ placement: "top-right" })],
       onViewStateChange: ({ interactionState }) => {
