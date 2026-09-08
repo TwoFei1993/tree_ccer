@@ -84,17 +84,18 @@ export function GridSampleMap({
     const deck = new Deck({
       parent: container,
       initialViewState,
-      controller: true,
+      // 关掉scrollZoom:deck.gl的MapController默认对鼠标滚轮做preventDefault()+stopPropagation()
+      // 来实现"滚轮缩放地图",但代价是用户只是想正常滚动鼠标滚轮浏览整个页面、光标恰好停在这块
+      // 地图上方时,也会被当成"缩放手势"拦截,触发下面onViewStateChange里的isZooming=true,
+      // 从而永久把hasUserInteractedRef.current设成true——之后任何resize(字体加载完成、
+      // 滚动条出现、窗口尺寸变化)都不会再重新fitBounds,镜头永远停在触发那一刻的陈旧状态,
+      // 表现出来就是"位置又不对了"。缩放需求已经由ZoomWidget的+/-按钮满足,不需要滚轮缩放。
+      controller: { scrollZoom: false },
       layers: [],
       // ZoomWidget加缩放按钮,与TreeCrownMap的NavigationControl视觉/交互一致
       widgets: [new ZoomWidget({ placement: "top-right" })],
       onViewStateChange: ({ interactionState }) => {
-        if (
-          interactionState?.isDragging ||
-          interactionState?.isPanning ||
-          interactionState?.isZooming ||
-          interactionState?.isRotating
-        ) {
+        if (interactionState?.isDragging || interactionState?.isPanning || interactionState?.isRotating) {
           hasUserInteractedRef.current = true;
         }
       },
