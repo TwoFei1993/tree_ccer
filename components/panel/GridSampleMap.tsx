@@ -54,6 +54,8 @@ export function GridSampleMap({
 }: GridSampleMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const deckRef = useRef<Deck | null>(null);
+  // "复位视角"按钮的handler在effect内部定义(要访问container/deck闭包),通过ref暴露给JSX
+  const resetViewRef = useRef<(() => void) | null>(null);
 
   const [minVal, maxVal] = useMemo(() => {
     const values = Array.from(correctedSurfaceByGridId.values());
@@ -72,9 +74,6 @@ export function GridSampleMap({
       initialRectForView.width || 580,
       initialRectForView.height || 453,
     );
-    // 用户是否已经手动拖动/缩放过地图——一旦交互过,resize不应再强行把镜头拉回fitBounds,
-    // 否则窗口大小发生任何变化(哪怕只是滚动条出现导致的1px抖动)都会把用户刚调好的视角冲掉。
-    const hasUserInteractedRef = { current: false };
     // 不自己创建canvas再传给Deck:实测发现"canvas: 自建元素"这个prop在这个版本下并未被
     // Deck真正采用于渲染——DOM里会同时出现我们自建的(空的)canvas和deck.gl内部另外创建
     // 的(真正渲染用的)第二个canvas,我们手动做的resize/物理分辨率同步全部作用在错误的
@@ -84,21 +83,13 @@ export function GridSampleMap({
     const deck = new Deck({
       parent: container,
       initialViewState,
-      // 关掉scrollZoom:deck.gl的MapController默认对鼠标滚轮做preventDefault()+stopPropagation()
-      // 来实现"滚轮缩放地图",但代价是用户只是想正常滚动鼠标滚轮浏览整个页面、光标恰好停在这块
-      // 地图上方时,也会被当成"缩放手势"拦截,触发下面onViewStateChange里的isZooming=true,
-      // 从而永久把hasUserInteractedRef.current设成true——之后任何resize(字体加载完成、
-      // 滚动条出现、窗口尺寸变化)都不会再重新fitBounds,镜头永远停在触发那一刻的陈旧状态,
-      // 表现出来就是"位置又不对了"。缩放需求已经由ZoomWidget的+/-按钮满足,不需要滚轮缩放。
+      // 关掉scrollZoom:deck.gl的MapController默认拦截地图上方的鼠标滚轮做"缩放地图",
+      // 用户正常滚动页面、光标恰好停在地图上时会被误当缩放手势,页面滚不动还打乱镜头。
+      // 缩放需求已由ZoomWidget的+/-按钮满足;平移保留(拖动),误拖后的恢复靠"复位视角"按钮。
       controller: { scrollZoom: false },
       layers: [],
       // ZoomWidget加缩放按钮,与TreeCrownMap的NavigationControl视觉/交互一致
       widgets: [new ZoomWidget({ placement: "top-right" })],
-      onViewStateChange: ({ interactionState }) => {
-        if (interactionState?.isDragging || interactionState?.isPanning || interactionState?.isRotating) {
-          hasUserInteractedRef.current = true;
-        }
-      },
     });
     deckRef.current = deck;
 
@@ -111,22 +102,26 @@ export function GridSampleMap({
     // 光同步分辨率不够:容器在挂载瞬间(骨架屏刚消失、字体/布局还没最终稳定)测到的尺寸,
     // 跟浏览器最终稳定布局后的真实尺寸经常不一样(实测偏差可达上百像素)。initialViewState
     // 的经纬度中心/zoom是按挂载瞬间那个尺寸算出来的一次性快照,后续resize只改了canvas
-    // 物理分辨率却没有重新fitBounds,导致镜头依然按旧尺寸的比例取景——真实画面在新尺寸的
-    // 容器里就会显得偏移/挤到一角(这正是"双期对比图挤在下方"的根因)。所以每次resize都要
-    // 重新算一次fitBounds并显式setProps({initialViewState})覆盖镜头,直到用户开始手动交互
-    // 为止(交互之后不再自动纠正,尊重用户已调整好的视角)。
+    // 物理分辨率却没有重新fitBounds,镜头就会按旧尺寸的比例取景。所以每次resize都无条件
+    // 重新fitBounds并setProps({initialViewState})覆盖镜头。早期版本在这里加过"用户交互过
+    // 就冻结自动校正"的判断,但误触发(误拖动、被拦截的滚轮事件等)会让镜头永久停在偏移
+    // 状态,人工反馈中反复出现的"位置不对"即来源于此——现在改为无条件校正,用户手动
+    // 调整过的视角若被resize冲掉,点"复位视角"按钮即可回到全景,不会有不可恢复的状态。
     const syncCanvasResolution = (width: number, height: number) => {
       const canvasEl = deck.getCanvas();
       if (!canvasEl) return;
       const dpr = window.devicePixelRatio || 1;
       canvasEl.width = Math.round(width * dpr);
       canvasEl.height = Math.round(height * dpr);
-      if (hasUserInteractedRef.current) {
-        deck.setProps({ width, height });
-      } else {
-        deck.setProps({ width, height, initialViewState: fitBoundsViewState(width, height) });
-      }
+      deck.setProps({ width, height, initialViewState: fitBoundsViewState(width, height) });
       deck.redraw();
+    };
+    // 暴露给"复位视角"按钮:用容器当前实际尺寸重新fitBounds,任何偏移状态一键回到全景
+    resetViewRef.current = () => {
+      const rect = container.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        syncCanvasResolution(rect.width, rect.height);
+      }
     };
     const resizeObserver = new ResizeObserver((entries) => {
       const entry = entries[0];
@@ -146,6 +141,7 @@ export function GridSampleMap({
       resizeObserver.disconnect();
       deck.finalize();
       deckRef.current = null;
+      resetViewRef.current = null;
       // deck.finalize()只在this.canvas===this._ownedCanvas时才移除canvas,但实测在React
       // 开发模式(effect因严格模式被挂载/卸载/重新挂载两次)下deck.gl留下了一个孤儿canvas
       // 未被finalize()清理,导致容器里同时存在一个空的旧canvas和一个新建的真实渲染canvas,
@@ -181,11 +177,20 @@ export function GridSampleMap({
   return (
     <div>
       <WebGLGuard heightClassName="h-[50vh]">
-        <div
-          ref={containerRef}
-          className="relative h-[50vh] w-full overflow-hidden rounded-md border border-stone-300 bg-stone-50"
-          data-testid="grid-sample-map"
-        />
+        <div className="relative">
+          <div
+            ref={containerRef}
+            className="relative h-[50vh] w-full overflow-hidden rounded-md border border-stone-300 bg-stone-50"
+            data-testid="grid-sample-map"
+          />
+          <button
+            type="button"
+            onClick={() => resetViewRef.current?.()}
+            className="absolute left-2 top-2 z-10 rounded-md border border-stone-300 bg-white/90 px-2 py-1 text-xs text-stone-700 shadow-sm hover:bg-white"
+          >
+            复位视角
+          </button>
+        </div>
       </WebGLGuard>
       <div className="mt-2 flex items-center gap-2 text-xs text-stone-600">
         <span>Kriging修正后碳汇增量估计值（t C/ha）：</span>
