@@ -90,6 +90,12 @@ export function GridSampleMap({
       layers: [],
       // ZoomWidget加缩放按钮,与TreeCrownMap的NavigationControl视觉/交互一致
       widgets: [new ZoomWidget({ placement: "top-right" })],
+      // deck.gl的WebGL设备是异步初始化的,onLoad是"设备就绪+首帧已渲染"的第一个可靠时机。
+      // 挂载瞬间用兜底尺寸算的initialViewState此刻可能仍不对,等两帧(布局稳定)后用容器
+      // 真实尺寸重新fitBounds——效果等同用户手动点一次"复位视角",让默认状态就是对的。
+      onLoad: () => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resetViewRef.current?.()));
+      },
     });
     deckRef.current = deck;
 
@@ -136,6 +142,9 @@ export function GridSampleMap({
     if (initialRect.width > 0 && initialRect.height > 0) {
       syncCanvasResolution(initialRect.width, initialRect.height);
     }
+    // 字体加载完成会触发布局重排(容器尺寸可能随之变化),等字体就绪后再校正一次镜头,
+    // 保证默认状态(不点任何按钮)就是正确全景。
+    document.fonts?.ready?.then(() => resetViewRef.current?.());
 
     return () => {
       resizeObserver.disconnect();

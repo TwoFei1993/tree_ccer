@@ -70,6 +70,11 @@ function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string })
       effects: [buildTreeCrownLightingEffect()], // 与TreeCrownMap同一套光照,保证两期对比视觉基调一致
       // ZoomWidget加缩放按钮,与TreeCrownMap的NavigationControl视觉/交互一致
       widgets: [new ZoomWidget({ placement: "top-right" })],
+      // deck.gl的WebGL设备是异步初始化的,onLoad是"设备就绪+首帧已渲染"的第一个可靠时机,
+      // 等两帧(布局稳定)后用容器真实尺寸重新fitBounds,让默认状态等同手动点过"复位视角"。
+      onLoad: () => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resetViewRef.current?.()));
+      },
     });
     deckRef.current = deck;
 
@@ -123,6 +128,8 @@ function PeriodPanel({ year, geoJsonUrl }: { year: number; geoJsonUrl: string })
     if (initialRect.width > 0 && initialRect.height > 0) {
       syncCanvasResolution(initialRect.width, initialRect.height);
     }
+    // 字体加载完成会触发布局重排(容器尺寸可能随之变化),等字体就绪后再校正一次镜头
+    document.fonts?.ready?.then(() => resetViewRef.current?.());
 
     return () => {
       resizeObserver.disconnect();
