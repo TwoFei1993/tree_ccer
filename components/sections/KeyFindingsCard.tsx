@@ -4,16 +4,25 @@ interface Finding {
   detail: string;
 }
 
-// 数字来源:交付成果/results/碳汇增量_蒙特卡洛结果.csv(RMSE改善) +
-// notebook cell 49 k选择规则(推荐区间) +
-// 交付成果/code/ground_truth_validation.py 的LiDAR估算DBH vs 地面实测DBH直接比对结果
-// (2018年rRMSE=8.07%、2024年rRMSE=6.53%,由Task 9导出到ground-truth-dbh.json的
-// lidar_vs_field_validation字段——注意不是DBH换算公式本身的cv_model_results那组数字,
-// 后者rRMSE范围是6.5%-7.0%,是另一套验证,详见Task 24的区分说明)
+// 数字来源:论文Table 2(n=27回归族RMSE 17.29→12.58/12.55,即27.3%/27.4%改善)、
+// Table 5(均值口径n=18时E7+SMP 3.09% vs CCER现有5.47%)、§4.2(三优化样点≈六随机样点)、
+// §2.2(LiDAR DBH vs 地面实测 2024年rRMSE=6.5%,88棵,IoU>0.5匹配)
 const FINDINGS: Finding[] = [
-  { label: "相对CCER基线RMSE改善", value: "32%–57%", detail: "跨5个独立随机种子验证稳健" },
-  { label: "推荐监测样本量区间", value: "k = 100–180", detail: "基于边际改善率拐点分析" },
-  { label: "地面实测DBH验证误差", value: "6.5%–8.1%", detail: "LiDAR估算DBH与地面实测DBH直接比对（2018/2024两期IoU匹配），满足CCER表35的10%阈值" },
+  {
+    label: "RMSE reduction from optimized sampling",
+    value: "27.4%",
+    detail: "Regression-family mapping RMSE at n = 27: 17.29 → 12.55 t C/ha vs within-zone random (20 seeds)",
+  },
+  {
+    label: "Verification efficiency",
+    value: "≈ 2×",
+    detail: "Three optimized plots per zone match the mapping accuracy of six randomly placed ones",
+  },
+  {
+    label: "LiDAR validated against field",
+    value: "6.5%",
+    detail: "Relative RMSE of LiDAR DBH vs 88 field-measured trees (2024, IoU > 0.5 matching), below the 10% CCER threshold",
+  },
 ];
 
 export function KeyFindingsCard() {

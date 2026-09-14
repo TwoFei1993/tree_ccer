@@ -1,9 +1,8 @@
-"""导出576个20m网格的GeoJSON,附带两期碳密度与增量属性,重投影到WGS84。
+"""导出576个20m网格的GeoJSON,附带2024碳密度与光谱属性,重投影到WGS84。
 
-Carbon_tha_18/24 取自Plot20m_2018/2024.csv(经load_merged_plots加载),不直接解析
-Carbon_tha_20m_2018/2024.tif栅格——两者同源同网格(CSV字段本身即从栅格聚合而来,
-notebook cell 5已交叉核验逐格一致),直接读CSV更简单,也复用Task 3已验证的
-load_merged_plots(),不需要引入rasterio的栅格读取逻辑。
+只导出2024年可观测信息(Carbon_tha_24/NDVI/NIRv):论文§3.5的数据边界规则
+明确2018表格是2024数据反推的、作为先验会构成数据泄漏,英文版网站全部
+只展示2024数据,不再导出_18与dC字段。
 """
 from pathlib import Path
 
@@ -18,7 +17,7 @@ def export_grid_carbon(out_path: Path):
     grid = gpd.read_file(grid_shp)
     df = load_merged_plots()
     merged = grid.merge(
-        df[["Grid_ID", "Carbon_tha_18", "Carbon_tha_24", "dC", "NDVI", "NIRv"]],
+        df[["Grid_ID", "Carbon_tha_24", "NDVI", "NIRv"]],
         on="Grid_ID",
         how="left",
     )

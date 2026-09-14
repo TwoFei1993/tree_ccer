@@ -1,0 +1,542 @@
+[
+ {
+  "design": "SMP-cLHS",
+  "method": "E1 Regression",
+  "zone": "Z1",
+  "rmse": 16.3
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E1 Regression",
+  "zone": "Z2",
+  "rmse": 11.2
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E1 Regression",
+  "zone": "Z3",
+  "rmse": 11.5
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E1 Regression",
+  "zone": "Z4",
+  "rmse": 12.1
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E1 Regression",
+  "zone": "Z5",
+  "rmse": 10.4
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E1 Regression",
+  "zone": "Z6",
+  "rmse": 12.5
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E1 Regression",
+  "zone": "Z7",
+  "rmse": 13.3
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E1 Regression",
+  "zone": "Z8",
+  "rmse": 11.6
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E1 Regression",
+  "zone": "Z9",
+  "rmse": 12.3
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z1",
+  "rmse": 15.9
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z2",
+  "rmse": 11.3
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z3",
+  "rmse": 11.6
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z4",
+  "rmse": 12.1
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z5",
+  "rmse": 10.3
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z6",
+  "rmse": 12.5
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z7",
+  "rmse": 13.3
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z8",
+  "rmse": 11.6
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z9",
+  "rmse": 12.6
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z1",
+  "rmse": 14.1
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z2",
+  "rmse": 12.7
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z3",
+  "rmse": 14.6
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z4",
+  "rmse": 13.8
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z5",
+  "rmse": 11.3
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z6",
+  "rmse": 14.4
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z7",
+  "rmse": 15.0
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z8",
+  "rmse": 13.3
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z9",
+  "rmse": 14.2
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z1",
+  "rmse": 15.2
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z2",
+  "rmse": 12.9
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z3",
+  "rmse": 14.5
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z4",
+  "rmse": 13.8
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z5",
+  "rmse": 11.3
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z6",
+  "rmse": 14.5
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z7",
+  "rmse": 15.1
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z8",
+  "rmse": 13.2
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z9",
+  "rmse": 14.1
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z1",
+  "rmse": 15.6
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z2",
+  "rmse": 12.8
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z3",
+  "rmse": 13.7
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z4",
+  "rmse": 13.8
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z5",
+  "rmse": 11.2
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z6",
+  "rmse": 14.0
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z7",
+  "rmse": 14.4
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z8",
+  "rmse": 12.9
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z9",
+  "rmse": 13.7
+ },
+ {
+  "design": "Zone random",
+  "method": "E1 Regression",
+  "zone": "Z1",
+  "rmse": 32.5
+ },
+ {
+  "design": "Zone random",
+  "method": "E1 Regression",
+  "zone": "Z2",
+  "rmse": 12.7
+ },
+ {
+  "design": "Zone random",
+  "method": "E1 Regression",
+  "zone": "Z3",
+  "rmse": 13.3
+ },
+ {
+  "design": "Zone random",
+  "method": "E1 Regression",
+  "zone": "Z4",
+  "rmse": 12.7
+ },
+ {
+  "design": "Zone random",
+  "method": "E1 Regression",
+  "zone": "Z5",
+  "rmse": 10.9
+ },
+ {
+  "design": "Zone random",
+  "method": "E1 Regression",
+  "zone": "Z6",
+  "rmse": 13.2
+ },
+ {
+  "design": "Zone random",
+  "method": "E1 Regression",
+  "zone": "Z7",
+  "rmse": 16.5
+ },
+ {
+  "design": "Zone random",
+  "method": "E1 Regression",
+  "zone": "Z8",
+  "rmse": 12.3
+ },
+ {
+  "design": "Zone random",
+  "method": "E1 Regression",
+  "zone": "Z9",
+  "rmse": 12.8
+ },
+ {
+  "design": "Zone random",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z1",
+  "rmse": 31.9
+ },
+ {
+  "design": "Zone random",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z2",
+  "rmse": 12.7
+ },
+ {
+  "design": "Zone random",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z3",
+  "rmse": 13.7
+ },
+ {
+  "design": "Zone random",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z4",
+  "rmse": 12.6
+ },
+ {
+  "design": "Zone random",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z5",
+  "rmse": 10.8
+ },
+ {
+  "design": "Zone random",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z6",
+  "rmse": 13.5
+ },
+ {
+  "design": "Zone random",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z7",
+  "rmse": 16.4
+ },
+ {
+  "design": "Zone random",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z8",
+  "rmse": 12.3
+ },
+ {
+  "design": "Zone random",
+  "method": "E4 Reg + Kriging",
+  "zone": "Z9",
+  "rmse": 13.0
+ },
+ {
+  "design": "Zone random",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z1",
+  "rmse": 21.1
+ },
+ {
+  "design": "Zone random",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z2",
+  "rmse": 12.5
+ },
+ {
+  "design": "Zone random",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z3",
+  "rmse": 13.3
+ },
+ {
+  "design": "Zone random",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z4",
+  "rmse": 13.1
+ },
+ {
+  "design": "Zone random",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z5",
+  "rmse": 10.8
+ },
+ {
+  "design": "Zone random",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z6",
+  "rmse": 14.0
+ },
+ {
+  "design": "Zone random",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z7",
+  "rmse": 14.2
+ },
+ {
+  "design": "Zone random",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z8",
+  "rmse": 12.3
+ },
+ {
+  "design": "Zone random",
+  "method": "E5 Fusion (E1+E2)",
+  "zone": "Z9",
+  "rmse": 12.9
+ },
+ {
+  "design": "Zone random",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z1",
+  "rmse": 21.4
+ },
+ {
+  "design": "Zone random",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z2",
+  "rmse": 12.7
+ },
+ {
+  "design": "Zone random",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z3",
+  "rmse": 13.3
+ },
+ {
+  "design": "Zone random",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z4",
+  "rmse": 13.1
+ },
+ {
+  "design": "Zone random",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z5",
+  "rmse": 10.7
+ },
+ {
+  "design": "Zone random",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z6",
+  "rmse": 14.1
+ },
+ {
+  "design": "Zone random",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z7",
+  "rmse": 14.5
+ },
+ {
+  "design": "Zone random",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z8",
+  "rmse": 12.1
+ },
+ {
+  "design": "Zone random",
+  "method": "E6 Fusion (E1+E3)",
+  "zone": "Z9",
+  "rmse": 13.5
+ },
+ {
+  "design": "Zone random",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z1",
+  "rmse": 23.0
+ },
+ {
+  "design": "Zone random",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z2",
+  "rmse": 12.6
+ },
+ {
+  "design": "Zone random",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z3",
+  "rmse": 13.7
+ },
+ {
+  "design": "Zone random",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z4",
+  "rmse": 13.0
+ },
+ {
+  "design": "Zone random",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z5",
+  "rmse": 10.6
+ },
+ {
+  "design": "Zone random",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z6",
+  "rmse": 14.2
+ },
+ {
+  "design": "Zone random",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z7",
+  "rmse": 14.6
+ },
+ {
+  "design": "Zone random",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z8",
+  "rmse": 12.0
+ },
+ {
+  "design": "Zone random",
+  "method": "E7 Pixel-wise fusion",
+  "zone": "Z9",
+  "rmse": 13.4
+ }
+]

@@ -1,0 +1,50 @@
+[
+ {
+  "n": 18,
+  "ccerCurrent": 5.47,
+  "e4Smp": 4.15,
+  "e7Smp": 3.09,
+  "e4ZoneRandom": 8.12,
+  "theoreticalU": 12.19
+ },
+ {
+  "n": 27,
+  "ccerCurrent": 3.76,
+  "e4Smp": 2.96,
+  "e7Smp": 2.77,
+  "e4ZoneRandom": 3.88,
+  "theoreticalU": 9.68
+ },
+ {
+  "n": 36,
+  "ccerCurrent": 4.53,
+  "e4Smp": 2.4,
+  "e7Smp": 2.31,
+  "e4ZoneRandom": 2.57,
+  "theoreticalU": 8.23
+ },
+ {
+  "n": 54,
+  "ccerCurrent": 3.33,
+  "e4Smp": 1.9,
+  "e7Smp": 1.84,
+  "e4ZoneRandom": 2.36,
+  "theoreticalU": 6.55
+ },
+ {
+  "n": 90,
+  "ccerCurrent": 2.28,
+  "e4Smp": 1.27,
+  "e7Smp": 1.32,
+  "e4ZoneRandom": 1.41,
+  "theoreticalU": 4.86
+ },
+ {
+  "n": 108,
+  "ccerCurrent": 2.0,
+  "e4Smp": 1.21,
+  "e7Smp": 1.23,
+  "e4ZoneRandom": 1.34,
+  "theoreticalU": 4.35
+ }
+]

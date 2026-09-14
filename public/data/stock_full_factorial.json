@@ -1,0 +1,569 @@
+[
+ {
+  "design": "SMP-cLHS",
+  "method": "E1 Regression",
+  "n": 27,
+  "rmseMean": 12.58,
+  "rmseSd": 1.72,
+  "maeMean": 9.76,
+  "r2Mean": 0.503
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E2 IDW",
+  "n": 27,
+  "rmseMean": 16.36,
+  "rmseSd": 0.59,
+  "maeMean": 12.67,
+  "r2Mean": 0.16
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E3 Kriging",
+  "n": 27,
+  "rmseMean": 16.47,
+  "rmseSd": 0.67,
+  "maeMean": 12.82,
+  "r2Mean": 0.148
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E4 Reg + Kriging",
+  "n": 27,
+  "rmseMean": 12.55,
+  "rmseSd": 1.73,
+  "maeMean": 9.73,
+  "r2Mean": 0.505
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E5 Fusion (E1+E2)",
+  "n": 27,
+  "rmseMean": 13.84,
+  "rmseSd": 1.64,
+  "maeMean": 10.85,
+  "r2Mean": 0.393
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E6 Fusion (E1+E3)",
+  "n": 27,
+  "rmseMean": 13.98,
+  "rmseSd": 1.66,
+  "maeMean": 10.99,
+  "r2Mean": 0.381
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E7 Pixel-wise fusion",
+  "n": 27,
+  "rmseMean": 13.69,
+  "rmseSd": 1.43,
+  "maeMean": 10.8,
+  "r2Mean": 0.407
+ },
+ {
+  "design": "Zone random",
+  "method": "E1 Regression",
+  "n": 27,
+  "rmseMean": 17.29,
+  "rmseSd": 10.17,
+  "maeMean": 11.06,
+  "r2Mean": -0.238
+ },
+ {
+  "design": "Zone random",
+  "method": "E2 IDW",
+  "n": 27,
+  "rmseMean": 16.95,
+  "rmseSd": 0.94,
+  "maeMean": 13.23,
+  "r2Mean": 0.109
+ },
+ {
+  "design": "Zone random",
+  "method": "E3 Kriging",
+  "n": 27,
+  "rmseMean": 17.26,
+  "rmseSd": 0.93,
+  "maeMean": 13.61,
+  "r2Mean": 0.077
+ },
+ {
+  "design": "Zone random",
+  "method": "E4 Reg + Kriging",
+  "n": 27,
+  "rmseMean": 17.28,
+  "rmseSd": 10.14,
+  "maeMean": 11.07,
+  "r2Mean": -0.233
+ },
+ {
+  "design": "Zone random",
+  "method": "E5 Fusion (E1+E2)",
+  "n": 27,
+  "rmseMean": 14.52,
+  "rmseSd": 3.98,
+  "maeMean": 10.62,
+  "r2Mean": 0.303
+ },
+ {
+  "design": "Zone random",
+  "method": "E6 Fusion (E1+E3)",
+  "n": 27,
+  "rmseMean": 14.67,
+  "rmseSd": 3.96,
+  "maeMean": 10.81,
+  "r2Mean": 0.291
+ },
+ {
+  "design": "Zone random",
+  "method": "E7 Pixel-wise fusion",
+  "n": 27,
+  "rmseMean": 15.03,
+  "rmseSd": 4.67,
+  "maeMean": 10.86,
+  "r2Mean": 0.237
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E1 Regression",
+  "n": 27,
+  "rmseMean": 17.69,
+  "rmseSd": 10.82,
+  "maeMean": 10.83,
+  "r2Mean": -0.297
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E2 IDW",
+  "n": 27,
+  "rmseMean": 16.64,
+  "rmseSd": 0.59,
+  "maeMean": 12.87,
+  "r2Mean": 0.14
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E3 Kriging",
+  "n": 27,
+  "rmseMean": 16.86,
+  "rmseSd": 0.72,
+  "maeMean": 13.2,
+  "r2Mean": 0.116
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E4 Reg + Kriging",
+  "n": 27,
+  "rmseMean": 17.57,
+  "rmseSd": 10.76,
+  "maeMean": 10.72,
+  "r2Mean": -0.281
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E5 Fusion (E1+E2)",
+  "n": 27,
+  "rmseMean": 14.67,
+  "rmseSd": 4.93,
+  "maeMean": 10.37,
+  "r2Mean": 0.264
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E6 Fusion (E1+E3)",
+  "n": 27,
+  "rmseMean": 14.75,
+  "rmseSd": 4.68,
+  "maeMean": 10.54,
+  "r2Mean": 0.263
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E7 Pixel-wise fusion",
+  "n": 27,
+  "rmseMean": 14.27,
+  "rmseSd": 3.67,
+  "maeMean": 10.48,
+  "r2Mean": 0.332
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E1 Regression",
+  "n": 54,
+  "rmseMean": 11.46,
+  "rmseSd": 0.5,
+  "maeMean": 9.13,
+  "r2Mean": 0.589
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E2 IDW",
+  "n": 54,
+  "rmseMean": 15.45,
+  "rmseSd": 0.47,
+  "maeMean": 11.98,
+  "r2Mean": 0.244
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E3 Kriging",
+  "n": 54,
+  "rmseMean": 15.88,
+  "rmseSd": 0.74,
+  "maeMean": 12.4,
+  "r2Mean": 0.2
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E4 Reg + Kriging",
+  "n": 54,
+  "rmseMean": 11.37,
+  "rmseSd": 0.56,
+  "maeMean": 9.07,
+  "r2Mean": 0.595
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E5 Fusion (E1+E2)",
+  "n": 54,
+  "rmseMean": 12.22,
+  "rmseSd": 0.7,
+  "maeMean": 9.74,
+  "r2Mean": 0.53
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E6 Fusion (E1+E3)",
+  "n": 54,
+  "rmseMean": 12.48,
+  "rmseSd": 0.91,
+  "maeMean": 9.96,
+  "r2Mean": 0.508
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E7 Pixel-wise fusion",
+  "n": 54,
+  "rmseMean": 12.1,
+  "rmseSd": 0.5,
+  "maeMean": 9.64,
+  "r2Mean": 0.539
+ },
+ {
+  "design": "Zone random",
+  "method": "E1 Regression",
+  "n": 54,
+  "rmseMean": 13.31,
+  "rmseSd": 3.43,
+  "maeMean": 9.63,
+  "r2Mean": 0.412
+ },
+ {
+  "design": "Zone random",
+  "method": "E2 IDW",
+  "n": 54,
+  "rmseMean": 16.19,
+  "rmseSd": 0.54,
+  "maeMean": 12.5,
+  "r2Mean": 0.189
+ },
+ {
+  "design": "Zone random",
+  "method": "E3 Kriging",
+  "n": 54,
+  "rmseMean": 16.42,
+  "rmseSd": 0.76,
+  "maeMean": 12.73,
+  "r2Mean": 0.164
+ },
+ {
+  "design": "Zone random",
+  "method": "E4 Reg + Kriging",
+  "n": 54,
+  "rmseMean": 13.16,
+  "rmseSd": 3.34,
+  "maeMean": 9.48,
+  "r2Mean": 0.426
+ },
+ {
+  "design": "Zone random",
+  "method": "E5 Fusion (E1+E2)",
+  "n": 54,
+  "rmseMean": 12.37,
+  "rmseSd": 1.35,
+  "maeMean": 9.53,
+  "r2Mean": 0.519
+ },
+ {
+  "design": "Zone random",
+  "method": "E6 Fusion (E1+E3)",
+  "n": 54,
+  "rmseMean": 12.41,
+  "rmseSd": 1.36,
+  "maeMean": 9.58,
+  "r2Mean": 0.515
+ },
+ {
+  "design": "Zone random",
+  "method": "E7 Pixel-wise fusion",
+  "n": 54,
+  "rmseMean": 12.42,
+  "rmseSd": 1.25,
+  "maeMean": 9.56,
+  "r2Mean": 0.515
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E1 Regression",
+  "n": 54,
+  "rmseMean": 12.27,
+  "rmseSd": 1.25,
+  "maeMean": 9.38,
+  "r2Mean": 0.525
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E2 IDW",
+  "n": 54,
+  "rmseMean": 15.7,
+  "rmseSd": 0.47,
+  "maeMean": 12.13,
+  "r2Mean": 0.23
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E3 Kriging",
+  "n": 54,
+  "rmseMean": 16.09,
+  "rmseSd": 0.85,
+  "maeMean": 12.55,
+  "r2Mean": 0.188
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E4 Reg + Kriging",
+  "n": 54,
+  "rmseMean": 12.14,
+  "rmseSd": 1.32,
+  "maeMean": 9.28,
+  "r2Mean": 0.534
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E5 Fusion (E1+E2)",
+  "n": 54,
+  "rmseMean": 11.97,
+  "rmseSd": 0.83,
+  "maeMean": 9.47,
+  "r2Mean": 0.55
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E6 Fusion (E1+E3)",
+  "n": 54,
+  "rmseMean": 12.1,
+  "rmseSd": 0.82,
+  "maeMean": 9.59,
+  "r2Mean": 0.541
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E7 Pixel-wise fusion",
+  "n": 54,
+  "rmseMean": 12.08,
+  "rmseSd": 0.8,
+  "maeMean": 9.57,
+  "r2Mean": 0.542
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E1 Regression",
+  "n": 90,
+  "rmseMean": 11.17,
+  "rmseSd": 0.44,
+  "maeMean": 8.88,
+  "r2Mean": 0.603
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E2 IDW",
+  "n": 90,
+  "rmseMean": 14.97,
+  "rmseSd": 0.4,
+  "maeMean": 11.72,
+  "r2Mean": 0.287
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E3 Kriging",
+  "n": 90,
+  "rmseMean": 15.16,
+  "rmseSd": 0.35,
+  "maeMean": 11.84,
+  "r2Mean": 0.269
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E4 Reg + Kriging",
+  "n": 90,
+  "rmseMean": 11.06,
+  "rmseSd": 0.51,
+  "maeMean": 8.78,
+  "r2Mean": 0.611
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E5 Fusion (E1+E2)",
+  "n": 90,
+  "rmseMean": 11.51,
+  "rmseSd": 0.51,
+  "maeMean": 9.18,
+  "r2Mean": 0.579
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E6 Fusion (E1+E3)",
+  "n": 90,
+  "rmseMean": 11.56,
+  "rmseSd": 0.5,
+  "maeMean": 9.2,
+  "r2Mean": 0.575
+ },
+ {
+  "design": "SMP-cLHS",
+  "method": "E7 Pixel-wise fusion",
+  "n": 90,
+  "rmseMean": 11.63,
+  "rmseSd": 0.47,
+  "maeMean": 9.24,
+  "r2Mean": 0.57
+ },
+ {
+  "design": "Zone random",
+  "method": "E1 Regression",
+  "n": 90,
+  "rmseMean": 11.49,
+  "rmseSd": 0.78,
+  "maeMean": 9.04,
+  "r2Mean": 0.583
+ },
+ {
+  "design": "Zone random",
+  "method": "E2 IDW",
+  "n": 90,
+  "rmseMean": 15.35,
+  "rmseSd": 0.54,
+  "maeMean": 11.93,
+  "r2Mean": 0.259
+ },
+ {
+  "design": "Zone random",
+  "method": "E3 Kriging",
+  "n": 90,
+  "rmseMean": 15.5,
+  "rmseSd": 0.52,
+  "maeMean": 12.07,
+  "r2Mean": 0.244
+ },
+ {
+  "design": "Zone random",
+  "method": "E4 Reg + Kriging",
+  "n": 90,
+  "rmseMean": 11.35,
+  "rmseSd": 0.83,
+  "maeMean": 8.93,
+  "r2Mean": 0.593
+ },
+ {
+  "design": "Zone random",
+  "method": "E5 Fusion (E1+E2)",
+  "n": 90,
+  "rmseMean": 11.65,
+  "rmseSd": 0.69,
+  "maeMean": 9.28,
+  "r2Mean": 0.572
+ },
+ {
+  "design": "Zone random",
+  "method": "E6 Fusion (E1+E3)",
+  "n": 90,
+  "rmseMean": 11.69,
+  "rmseSd": 0.71,
+  "maeMean": 9.29,
+  "r2Mean": 0.569
+ },
+ {
+  "design": "Zone random",
+  "method": "E7 Pixel-wise fusion",
+  "n": 90,
+  "rmseMean": 11.67,
+  "rmseSd": 0.67,
+  "maeMean": 9.25,
+  "r2Mean": 0.57
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E1 Regression",
+  "n": 90,
+  "rmseMean": 11.44,
+  "rmseSd": 0.8,
+  "maeMean": 9.02,
+  "r2Mean": 0.589
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E2 IDW",
+  "n": 90,
+  "rmseMean": 15.24,
+  "rmseSd": 0.5,
+  "maeMean": 11.84,
+  "r2Mean": 0.272
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E3 Kriging",
+  "n": 90,
+  "rmseMean": 15.4,
+  "rmseSd": 0.42,
+  "maeMean": 11.97,
+  "r2Mean": 0.256
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E4 Reg + Kriging",
+  "n": 90,
+  "rmseMean": 11.27,
+  "rmseSd": 0.78,
+  "maeMean": 8.87,
+  "r2Mean": 0.602
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E5 Fusion (E1+E2)",
+  "n": 90,
+  "rmseMean": 11.56,
+  "rmseSd": 0.45,
+  "maeMean": 9.24,
+  "r2Mean": 0.582
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E6 Fusion (E1+E3)",
+  "n": 90,
+  "rmseMean": 11.62,
+  "rmseSd": 0.45,
+  "maeMean": 9.28,
+  "r2Mean": 0.577
+ },
+ {
+  "design": "Zone systematic",
+  "method": "E7 Pixel-wise fusion",
+  "n": 90,
+  "rmseMean": 11.62,
+  "rmseSd": 0.44,
+  "maeMean": 9.25,
+  "r2Mean": 0.577
+ }
+]

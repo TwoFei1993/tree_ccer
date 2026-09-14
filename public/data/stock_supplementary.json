@@ -1,0 +1,84 @@
+{
+ "samplingAttribute": [
+  {
+   "n": 27,
+   "ndviOnly": 14.86,
+   "bivariate": 12.55
+  },
+  {
+   "n": 54,
+   "ndviOnly": 11.72,
+   "bivariate": 11.37
+  },
+  {
+   "n": 90,
+   "ndviOnly": 11.04,
+   "bivariate": 11.06
+  }
+ ],
+ "rfVariant": [
+  {
+   "design": "SMP-cLHS",
+   "n": 27,
+   "rmseMean": 13.99,
+   "rmseSd": 0.37
+  },
+  {
+   "design": "SMP-cLHS",
+   "n": 54,
+   "rmseMean": 12.61,
+   "rmseSd": 0.33
+  },
+  {
+   "design": "SMP-cLHS",
+   "n": 90,
+   "rmseMean": 11.83,
+   "rmseSd": 0.26
+  },
+  {
+   "design": "Zone systematic",
+   "n": 27,
+   "rmseMean": 14.37,
+   "rmseSd": 0.89
+  },
+  {
+   "design": "Zone systematic",
+   "n": 54,
+   "rmseMean": 12.68,
+   "rmseSd": 0.48
+  },
+  {
+   "design": "Zone systematic",
+   "n": 90,
+   "rmseMean": 12.14,
+   "rmseSd": 0.33
+  },
+  {
+   "design": "Zone random",
+   "n": 27,
+   "rmseMean": 13.93,
+   "rmseSd": 0.55
+  },
+  {
+   "design": "Zone random",
+   "n": 54,
+   "rmseMean": 12.94,
+   "rmseSd": 0.57
+  },
+  {
+   "design": "Zone random",
+   "n": 90,
+   "rmseMean": 11.99,
+   "rmseSd": 0.39
+  }
+ ],
+ "twoStage": {
+  "n": 54,
+  "calibrationSize": 200,
+  "singleStageRmse": 11.37,
+  "singleStageSd": 0.56,
+  "twoStageRmse": 10.64,
+  "twoStageSd": 0.17,
+  "gainPct": 6.4
+ }
+}

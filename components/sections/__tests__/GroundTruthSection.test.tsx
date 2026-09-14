@@ -20,12 +20,15 @@ describe("GroundTruthSection", () => {
     ) as unknown as typeof fetch;
   });
 
-  it("renders the LiDAR-vs-field validation rRMSE for both years as the primary evidence", async () => {
+  it("renders only the 2024 LiDAR-vs-field validation as the primary evidence", async () => {
     render(<GroundTruthSection />);
     await waitFor(() => {
-      expect(screen.getByText(/8\.07/)).toBeInTheDocument();
+      // 2024年这一期是论文§2.2引用的验证证据
       expect(screen.getByText(/6\.53/)).toBeInTheDocument();
+      expect(screen.getByText(/≤10%, no deduction/)).toBeInTheDocument();
     });
+    // 2018年数据不再展示(论文§3.5: 2018表格系2024数据反推,不构成独立证据)
+    expect(screen.queryByText(/8\.07/)).not.toBeInTheDocument();
   });
 
   it("renders the DBH formula cross-validation table as clearly-labeled secondary context", async () => {
@@ -33,13 +36,12 @@ describe("GroundTruthSection", () => {
     await waitFor(() => {
       expect(screen.getByText(/6\.52/)).toBeInTheDocument();
     });
-    // 两组数字必须有明确的区分标注,不能只靠数值大小让读者自己猜
-    // (换算公式出现在标题和说明段落两处,用 getAllByText 避免多重匹配报错)
-    expect(screen.getAllByText(/换算公式/).length).toBeGreaterThan(0);
+    // 两组数字必须有明确的区分标注(英文版用"conversion formula"标注辅助性质)
+    expect(screen.getAllByText(/conversion formula/i).length).toBeGreaterThan(0);
   });
 
   it("renders the diagnostic images", () => {
     render(<GroundTruthSection />);
-    expect(screen.getByAltText(/观测值.*预测值|observed/i)).toBeInTheDocument();
+    expect(screen.getByAltText(/observed vs predicted/i)).toBeInTheDocument();
   });
 });

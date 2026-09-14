@@ -10,7 +10,9 @@ def test_export_grid_carbon(tmp_path):
     assert gj["type"] == "FeatureCollection"
     assert len(gj["features"]) == 576
     props = gj["features"][0]["properties"]
-    assert "Carbon_tha_18" in props
+    # 英文版只导出2024可观测信息(论文§3.5数据边界:2018表格系反推,作先验即泄漏)
     assert "Carbon_tha_24" in props
-    assert "dC" in props
-    assert abs(props["dC"] - (props["Carbon_tha_24"] - props["Carbon_tha_18"])) < 1e-6
+    assert "NDVI" in props
+    assert "NIRv" in props
+    assert "Carbon_tha_18" not in props
+    assert "dC" not in props
