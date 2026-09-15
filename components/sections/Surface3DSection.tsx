@@ -149,19 +149,31 @@ function SurfacePanel({
   useEffect(() => {
     if (!deckRef.current || !mesh) return;
     type MeshLayerProps = ConstructorParameters<typeof SimpleMeshLayer>[0];
+    // 复刻论文plot_surface(edgecolor='k')的观感:
+    // 1) 填充层关闭背面剔除(cullMode:'none'),倾斜视角下陡坡面不被剔除,曲面完整连续;
+    // 2) wireframe层用深色线条勾出每个三角形的边——浅色面片(低碳格点)若没有这层勾边,
+    //    在stone-50浅色背景上会"隐形",看起来像曲面缺了洞。
+    const common = {
+      data: mesh,
+      mesh,
+      getColor: [255, 255, 255],
+      flatShading: true,
+      pickable: false,
+    } as unknown as MeshLayerProps;
     deckRef.current.setProps({
       layers: [
         new SimpleMeshLayer({
-          id: `surface-${title}`,
-          // deck.gl对"mesh对象直接作为data"的TS联合类型定义与运行时用法不匹配,
-          // 运行时官方示例即传同一对象,这里整体断言到层的props类型
-          data: mesh,
-          mesh,
-          // 最终颜色 = 顶点色 × getColor(默认纯黑!)。给白色让顶点色原样透出
-          getColor: [255, 255, 255],
-          flatShading: true,
-          material: { ambient: 0.85, diffuse: 0.5 },
-          pickable: false,
+          ...common,
+          id: `surface-fill-${title}`,
+          parameters: { cullMode: "none" },
+          material: { ambient: 0.9, diffuse: 0.4 },
+        } as unknown as MeshLayerProps),
+        new SimpleMeshLayer({
+          ...common,
+          id: `surface-wire-${title}`,
+          wireframe: true,
+          // 半透明深色勾边,对应论文plot_surface的linewidth=0.15细黑边
+          getColor: [50, 60, 50, 110],
         } as unknown as MeshLayerProps),
       ],
     });
