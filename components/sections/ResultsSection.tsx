@@ -13,24 +13,14 @@ import {
   YAxis,
 } from "recharts";
 import { useStockData } from "@/lib/hooks/useStockData";
+import { Surface3DPanelGrid } from "./Surface3DSection";
 
 const LINE_COLORS = ["#4d7c0f", "#b45309", "#1d4ed8", "#b91c1c", "#6b7280", "#0f766e", "#7c3aed"];
-// CCER基线在补充实验里只有n=27/54/90三档(20种子),其余n档为空值;用近黑色与论文图18一致
-const CCER_BASELINE_COLOR = "#111827";
 
-/** 结果章节:样本量扫描曲线(论文Figure 17)、CCER均值口径对比(Table 5/图18)、分区精度(Table 6)。 */
+/** 结果章节:样本量扫描曲线(论文Figure 17)、E4三维曲面(图13交互版)、CCER均值口径对比(Table 5/图18)、分区精度(Table 6)。 */
 export function ResultsSection() {
-  const { sweeps, ccer, zones, supplementary, loading } = useStockData();
+  const { sweeps, ccer, zones, loading } = useStockData();
   const [sweepView, setSweepView] = useState<"byEstimator" | "byDesign">("byEstimator");
-
-  // CCER基线(全域随机+样本均值)按n索引,只取SMP设计那一组(与byEstimator视图"全部在SMP下"的口径一致)
-  const ccerBaselineByN = useMemo(() => {
-    const map = new Map<number, number>();
-    for (const r of supplementary?.ccerBaseline ?? []) {
-      if (r.design === "SMP-cLHS") map.set(r.n, r.rmseMean);
-    }
-    return map;
-  }, [supplementary]);
 
   const sweepData = useMemo(() => {
     if (!sweeps) return [];
@@ -42,13 +32,9 @@ export function ResultsSection() {
       for (const name of names) {
         row[name] = view[name].rmseMean[i];
       }
-      // CCER基线只在byEstimator视图出现(设计视图的横轴语义是"同一估算器换设计",基线不适用)
-      if (sweepView === "byEstimator" && ccerBaselineByN.has(n)) {
-        row["CCER baseline (sample mean)"] = ccerBaselineByN.get(n);
-      }
       return row;
     });
-  }, [sweeps, sweepView, ccerBaselineByN]);
+  }, [sweeps, sweepView]);
 
   const sweepNames = useMemo(() => (sweeps ? Object.keys(sweeps[sweepView]) : []), [sweeps, sweepView]);
 
@@ -115,23 +101,29 @@ export function ResultsSection() {
                 dot={false}
               />
             ))}
-            {sweepView === "byEstimator" && (
-              <Line
-                type="monotone"
-                dataKey="CCER baseline (sample mean)"
-                stroke={CCER_BASELINE_COLOR}
-                strokeWidth={2}
-                connectNulls
-                dot={{ r: 3 }}
-              />
-            )}
           </LineChart>
         </ResponsiveContainer>
         <p className="figure-caption">
           Figure 5 · Mapping RMSE versus sample size ({sweeps?.nSeeds} replicates per level;
-          estimator view: all under SMP; design view: all with E4). The CCER baseline
-          (region-wide random sampling plus the sample mean, shown as a flat map) is plotted at the
-          n = 27/54/90 levels of the supplementary experiment (20 seeds).
+          estimator view: all under SMP; design view: all with E4)
+        </p>
+      </div>
+
+      <div className="rounded-md border border-stone-300 bg-white p-6">
+        <h3 className="font-serif text-lg font-semibold text-stone-900">
+          Truth, E4 estimate, and error as interactive 3D surfaces
+        </h3>
+        <p className="mt-1 text-sm text-stone-600">
+          The E4 fused estimator (regression + kriged residuals, n = 54 SMP plots) keeps the main
+          terrain of the truth surface; the error concentrates in the low-NDVI sparse patches that
+          small random samples under-cover. Drag on a panel to rotate.
+        </p>
+        <div className="mt-3">
+          <Surface3DPanelGrid />
+        </div>
+        <p className="figure-caption">
+          Figure 6 · Carbon-stock 3D surfaces: truth vs E4 estimate vs |error| (n = 54, SMP, seed
+          0) — interactive version
         </p>
       </div>
 
@@ -165,7 +157,7 @@ export function ResultsSection() {
                 type="monotone"
                 dataKey="ccerCurrent"
                 name="CCER current: random + sample mean"
-                stroke={CCER_BASELINE_COLOR}
+                stroke="#111827"
                 strokeWidth={2}
                 dot={{ r: 3 }}
               />
@@ -207,7 +199,7 @@ export function ResultsSection() {
             </LineChart>
           </ResponsiveContainer>
           <p className="figure-caption">
-            Figure 6 · Relative error of the mean estimate versus sample size (100 replicates);
+            Figure 7 · Relative error of the mean estimate versus sample size (100 replicates);
             dashed black: CCER Appendix F theoretical u; red dotted: the u = 10% no-deduction
             threshold of Table 35
           </p>
@@ -235,7 +227,7 @@ export function ResultsSection() {
             </LineChart>
           </ResponsiveContainer>
           <p className="figure-caption">
-            Figure 7 · Per-zone mapping RMSE (n = 27, mean of 20 seeds, t C/ha)
+            Figure 8 · Per-zone mapping RMSE (n = 27, mean of 20 seeds, t C/ha)
           </p>
         </div>
       )}

@@ -105,7 +105,7 @@ export function GroundTruthSection() {
             height={450}
             className="rounded-md border border-stone-300"
           />
-          <p className="figure-caption">Figure 8 · DBH conversion: observed vs predicted (cross-validation)</p>
+          <p className="figure-caption">Figure 9 · DBH conversion: observed vs predicted (cross-validation)</p>
         </figure>
         <figure>
           <Image
@@ -115,7 +115,7 @@ export function GroundTruthSection() {
             height={450}
             className="rounded-md border border-stone-300"
           />
-          <p className="figure-caption">Figure 9 · DBH conversion: residual diagnostics</p>
+          <p className="figure-caption">Figure 10 · DBH conversion: residual diagnostics</p>
         </figure>
       </div>
     </section>
