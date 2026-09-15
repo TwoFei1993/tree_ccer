@@ -136,20 +136,29 @@ def export_zone_rmse(results_dir: Path, out_path: Path):
 
 
 def export_supplementary(results_dir: Path, out_path: Path):
-    """补充实验:RF先验变体(从CSV聚合)+单/双变量属性+两阶段协议(论文发表数字)。"""
+    """补充实验:RF先验变体+CCER基线(从CSV聚合)+单/双变量属性+两阶段协议(论文发表数字)。"""
     df = pd.read_csv(results_dir / "碳储量2024_补充基线与RF变体.csv")
-    rf = df[df["method"] == "E1_RF+光谱"]
-    agg = (
-        rf.groupby(["design", "n"], as_index=False)["rmse"]
-        .agg(rmseMean=lambda s: round(float(s.mean()), 2), rmseSd=lambda s: round(float(s.std()), 2))
-    )
-    rf_variant = [
-        {"design": DESIGN_EN[r["design"]], "n": int(r["n"]), "rmseMean": r["rmseMean"], "rmseSd": r["rmseSd"]}
-        for _, r in agg.iterrows()
-    ]
+
+    def agg_by_design_n(method: str) -> list[dict]:
+        sub = df[df["method"] == method]
+        agg = (
+            sub.groupby(["design", "n"], as_index=False)["rmse"]
+            .agg(rmseMean=lambda s: round(float(s.mean()), 2), rmseSd=lambda s: round(float(s.std()), 2))
+        )
+        return [
+            {"design": DESIGN_EN[r["design"]], "n": int(r["n"]), "rmseMean": r["rmseMean"], "rmseSd": r["rmseSd"]}
+            for _, r in agg.iterrows()
+        ]
+
+    # CCER基线 = 论文图18的"CCER现行:全域随机+样本均值"(制图上是全域均值的平图),
+    # 作为一条方法曲线进入"制图误差 vs 样本量"对比
+    ccer_baseline = agg_by_design_n("CCER均值平图")
+    rf_variant = agg_by_design_n("E1_RF+光谱")
+
     out = {
         "samplingAttribute": SAMPLING_ATTRIBUTE,
         "rfVariant": rf_variant,
+        "ccerBaseline": ccer_baseline,
         "twoStage": TWO_STAGE,
     }
     out_path.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")

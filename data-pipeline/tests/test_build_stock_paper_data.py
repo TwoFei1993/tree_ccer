@@ -62,3 +62,5 @@ def test_export_zone_rmse_and_supplementary(tmp_path):
     assert sup["twoStage"]["gainPct"] == 6.4
     assert len(sup["samplingAttribute"]) == 3
     assert len(sup["rfVariant"]) == 9  # 3 designs x 3 n-levels
+    # CCER基线(全域随机+样本均值)同样覆盖3设计x3样本量,供扫描图作基线曲线
+    assert len(sup["ccerBaseline"]) == 9

@@ -36,6 +36,8 @@ export interface ZoneRmseRow {
 export interface SupplementaryData {
   samplingAttribute: { n: number; ndviOnly: number; bivariate: number }[];
   rfVariant: { design: string; n: number; rmseMean: number; rmseSd: number }[];
+  /** CCER现行基线(全域随机+样本均值,制图为全域均值平图)的制图RMSE,20种子聚合 */
+  ccerBaseline: { design: string; n: number; rmseMean: number; rmseSd: number }[];
   twoStage: {
     n: number;
     calibrationSize: number;

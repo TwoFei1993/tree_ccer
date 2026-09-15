@@ -2,12 +2,11 @@
 
 import { useMemo, useState } from "react";
 import {
-  Bar,
-  BarChart,
   CartesianGrid,
   Legend,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -16,11 +15,22 @@ import {
 import { useStockData } from "@/lib/hooks/useStockData";
 
 const LINE_COLORS = ["#4d7c0f", "#b45309", "#1d4ed8", "#b91c1c", "#6b7280", "#0f766e", "#7c3aed"];
+// CCER基线在补充实验里只有n=27/54/90三档(20种子),其余n档为空值;用近黑色与论文图18一致
+const CCER_BASELINE_COLOR = "#111827";
 
-/** 结果章节:样本量扫描曲线(论文Figure 17)、CCER均值口径对比(Table 5)、分区精度(Table 6)。 */
+/** 结果章节:样本量扫描曲线(论文Figure 17)、CCER均值口径对比(Table 5/图18)、分区精度(Table 6)。 */
 export function ResultsSection() {
-  const { sweeps, ccer, zones, loading } = useStockData();
+  const { sweeps, ccer, zones, supplementary, loading } = useStockData();
   const [sweepView, setSweepView] = useState<"byEstimator" | "byDesign">("byEstimator");
+
+  // CCER基线(全域随机+样本均值)按n索引,只取SMP设计那一组(与byEstimator视图"全部在SMP下"的口径一致)
+  const ccerBaselineByN = useMemo(() => {
+    const map = new Map<number, number>();
+    for (const r of supplementary?.ccerBaseline ?? []) {
+      if (r.design === "SMP-cLHS") map.set(r.n, r.rmseMean);
+    }
+    return map;
+  }, [supplementary]);
 
   const sweepData = useMemo(() => {
     if (!sweeps) return [];
@@ -28,13 +38,17 @@ export function ResultsSection() {
     const names = Object.keys(view);
     const ns = view[names[0]].ns;
     return ns.map((n, i) => {
-      const row: Record<string, string | number> = { n: String(n) };
+      const row: Record<string, string | number | undefined> = { n: String(n) };
       for (const name of names) {
         row[name] = view[name].rmseMean[i];
       }
+      // CCER基线只在byEstimator视图出现(设计视图的横轴语义是"同一估算器换设计",基线不适用)
+      if (sweepView === "byEstimator" && ccerBaselineByN.has(n)) {
+        row["CCER baseline (sample mean)"] = ccerBaselineByN.get(n);
+      }
       return row;
     });
-  }, [sweeps, sweepView]);
+  }, [sweeps, sweepView, ccerBaselineByN]);
 
   const sweepNames = useMemo(() => (sweeps ? Object.keys(sweeps[sweepView]) : []), [sweeps, sweepView]);
 
@@ -101,11 +115,23 @@ export function ResultsSection() {
                 dot={false}
               />
             ))}
+            {sweepView === "byEstimator" && (
+              <Line
+                type="monotone"
+                dataKey="CCER baseline (sample mean)"
+                stroke={CCER_BASELINE_COLOR}
+                strokeWidth={2}
+                connectNulls
+                dot={{ r: 3 }}
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
         <p className="figure-caption">
-          Figure 5 · Mapping RMSE versus sample size ({sweeps?.nSeeds} replicates per level; left
-          view: all under SMP; right view: all with E4)
+          Figure 5 · Mapping RMSE versus sample size ({sweeps?.nSeeds} replicates per level;
+          estimator view: all under SMP; design view: all with E4). The CCER baseline
+          (region-wide random sampling plus the sample mean, shown as a flat map) is plotted at the
+          n = 27/54/90 levels of the supplementary experiment (20 seeds).
         </p>
       </div>
 
@@ -118,22 +144,72 @@ export function ResultsSection() {
             The official CCER criterion scores only the regional mean. Optimized sampling with a
             fused estimator stays well below the CCER theoretical uncertainty at every budget.
           </p>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={ccer} margin={{ top: 8, right: 16, bottom: 8, left: 0 }}>
+          <ResponsiveContainer width="100%" height={320}>
+            <LineChart data={ccer} margin={{ top: 8, right: 16, bottom: 8, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
               <XAxis dataKey="n" stroke="#78716c" fontSize={12} />
               <YAxis stroke="#78716c" fontSize={12} unit="%" />
               <Tooltip formatter={(value) => `${Number(value).toFixed(2)}%`} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="ccerCurrent" name="CCER current practice" fill="#a8a29e" />
-              <Bar dataKey="e4Smp" name="E4 + SMP" fill="#4d7c0f" />
-              <Bar dataKey="e7Smp" name="E7 + SMP" fill="#166534" />
-              <Bar dataKey="e4ZoneRandom" name="E4 + zone random" fill="#ca8a04" />
-            </BarChart>
+              {/* 理论u虚线(附录F公式)与10%表35免扣减线,复刻论文图18的参考元素 */}
+              <Line
+                type="monotone"
+                dataKey="theoreticalU"
+                name="CCER theoretical u (Appendix F)"
+                stroke="#374151"
+                strokeWidth={2}
+                strokeDasharray="6 4"
+                dot={false}
+              />
+              <Line
+                type="monotone"
+                dataKey="ccerCurrent"
+                name="CCER current: random + sample mean"
+                stroke={CCER_BASELINE_COLOR}
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="e4Smp"
+                name="E4 + SMP"
+                stroke="#dc2626"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="e7Smp"
+                name="E7 + SMP"
+                stroke="#2563eb"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="e4ZoneRandom"
+                name="E4 + zone random"
+                stroke="#9ca3af"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+              <ReferenceLine
+                y={10}
+                stroke="#dc2626"
+                strokeDasharray="2 4"
+                label={{
+                  value: "u = 10% (Table 35 no-deduction line)",
+                  position: "insideTopRight",
+                  fontSize: 11,
+                  fill: "#dc2626",
+                }}
+              />
+            </LineChart>
           </ResponsiveContainer>
           <p className="figure-caption">
-            Figure 6 · Relative error of the mean estimate versus sample size (100 replicates); the
-            CCER Appendix F theoretical u at n = 27 is 9.68%
+            Figure 6 · Relative error of the mean estimate versus sample size (100 replicates);
+            dashed black: CCER Appendix F theoretical u; red dotted: the u = 10% no-deduction
+            threshold of Table 35
           </p>
         </div>
       )}
@@ -148,15 +224,15 @@ export function ResultsSection() {
             heterogeneous zones, while SMP keeps every zone usable.
           </p>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={zoneData} margin={{ top: 8, right: 16, bottom: 8, left: 0 }}>
+            <LineChart data={zoneData} margin={{ top: 8, right: 16, bottom: 8, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
               <XAxis dataKey="zone" stroke="#78716c" fontSize={12} />
               <YAxis stroke="#78716c" fontSize={12} />
               <Tooltip formatter={(value) => `${Number(value).toFixed(1)} t C/ha`} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="SMP-cLHS (E4)" fill="#4d7c0f" />
-              <Bar dataKey="Zone random (E4)" fill="#ca8a04" />
-            </BarChart>
+              <Line type="monotone" dataKey="SMP-cLHS (E4)" stroke="#4d7c0f" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="Zone random (E4)" stroke="#ca8a04" strokeWidth={2} dot={{ r: 3 }} />
+            </LineChart>
           </ResponsiveContainer>
           <p className="figure-caption">
             Figure 7 · Per-zone mapping RMSE (n = 27, mean of 20 seeds, t C/ha)

@@ -72,6 +72,62 @@
    "rmseSd": 0.39
   }
  ],
+ "ccerBaseline": [
+  {
+   "design": "SMP-cLHS",
+   "n": 27,
+   "rmseMean": 17.83,
+   "rmseSd": 0.12
+  },
+  {
+   "design": "SMP-cLHS",
+   "n": 54,
+   "rmseMean": 17.76,
+   "rmseSd": 0.21
+  },
+  {
+   "design": "SMP-cLHS",
+   "n": 90,
+   "rmseMean": 17.73,
+   "rmseSd": 0.16
+  },
+  {
+   "design": "Zone systematic",
+   "n": 27,
+   "rmseMean": 17.93,
+   "rmseSd": 0.27
+  },
+  {
+   "design": "Zone systematic",
+   "n": 54,
+   "rmseMean": 17.85,
+   "rmseSd": 0.18
+  },
+  {
+   "design": "Zone systematic",
+   "n": 90,
+   "rmseMean": 17.83,
+   "rmseSd": 0.2
+  },
+  {
+   "design": "Zone random",
+   "n": 27,
+   "rmseMean": 17.99,
+   "rmseSd": 0.37
+  },
+  {
+   "design": "Zone random",
+   "n": 54,
+   "rmseMean": 17.95,
+   "rmseSd": 0.32
+  },
+  {
+   "design": "Zone random",
+   "n": 90,
+   "rmseMean": 17.81,
+   "rmseSd": 0.32
+  }
+ ],
  "twoStage": {
   "n": 54,
   "calibrationSize": 200,
