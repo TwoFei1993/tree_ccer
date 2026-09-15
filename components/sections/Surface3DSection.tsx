@@ -59,6 +59,8 @@ function buildMesh(grid: number[][], cellSize: number, zExag: number, vmin: numb
     }
   }
   const quads = (rows - 1) * (cols - 1);
+  // 非索引三角形 soup:实测此deck.gl 9.4+luma组合下Geometry的索引路径会丢三角形
+  // (隔离测试:2x2网格仅第一个三角形绘制,非索引写法则全部绘制),故每顶点独立展开。
   const indices = new Uint16Array(quads * 6);
   let k = 0;
   for (let r = 0; r < rows - 1; r++) {
@@ -67,11 +69,25 @@ function buildMesh(grid: number[][], cellSize: number, zExag: number, vmin: numb
       const b = a + 1;
       const d = a + cols;
       const e = d + 1;
-      // 逆时针环绕(从+z看):保证三角面朝上,否则默认背面剔除会把正面剔掉,只剩碎片
       indices[k++] = a; indices[k++] = b; indices[k++] = d;
       indices[k++] = b; indices[k++] = e; indices[k++] = d;
     }
   }
+  // 展开为非索引格式(每三角形3顶点),正反两面都保留,任何视角都完整
+  const soupPositions = new Float32Array(indices.length * 3);
+  const soupColors = new Float32Array(indices.length * 3);
+  indices.forEach((vi, i) => {
+    soupPositions[i * 3] = positions[vi * 3];
+    soupPositions[i * 3 + 1] = positions[vi * 3 + 1];
+    soupPositions[i * 3 + 2] = positions[vi * 3 + 2];
+    soupColors[i * 3] = colors[vi * 3];
+    soupColors[i * 3 + 1] = colors[vi * 3 + 1];
+    soupColors[i * 3 + 2] = colors[vi * 3 + 2];
+  });
+  return {
+    positions: { value: soupPositions, size: 3 },
+    colors: { value: soupColors, size: 3 },
+  };
   return {
     positions: { value: positions, size: 3 },
     colors: { value: colors, size: 3 },
@@ -93,8 +109,6 @@ function SurfacePanel({
   mesh: {
     positions: { value: Float32Array; size: number };
     colors: { value: Float32Array; size: number };
-    normals: { value: Float32Array; size: number };
-    indices: Uint16Array;
   } | null;
   title: string;
   subtitle: string;
@@ -115,9 +129,11 @@ function SurfacePanel({
       // parent必须显式指定:不带parent/canvas时Deck会把canvas append到document.body,
       // 画面渲染在面板外(实测三个曲面画到了body下的绝对定位canvas里,面板本身全空)。
       parent: container,
-      // OrbitView实例不能三个Deck共享(View内部有per-deck状态),每个面板各建一个
-      views: new OrbitView({ id: "orbit", controller: { scrollZoom: false } }),
-      initialViewState: { target: [240, 240, 55], rotationX: 30, rotationOrbit: -60, zoom: -1.1 },
+      // OrbitView实例不能三个Deck共享(View内部有per-deck状态),每个面板各建一个。
+      // orthographic正交投影:透视模式下近处尖峰会在画面上放大到遮住后方大片区域,
+      // 曲面呈现"碎片化";论文的matplotlib 3D图接近正交效果,正交下整片地形一目了然。
+      views: new OrbitView({ id: "orbit", orthographic: true, controller: { scrollZoom: false } }),
+      initialViewState: { target: [240, 240, 55], rotationX: 90, rotationOrbit: 0, zoom: -0.8 },
       controller: { scrollZoom: false },
       width: rect.width || 320,
       height: rect.height || 260,
@@ -149,31 +165,23 @@ function SurfacePanel({
   useEffect(() => {
     if (!deckRef.current || !mesh) return;
     type MeshLayerProps = ConstructorParameters<typeof SimpleMeshLayer>[0];
-    // 复刻论文plot_surface(edgecolor='k')的观感:
-    // 1) 填充层关闭背面剔除(cullMode:'none'),倾斜视角下陡坡面不被剔除,曲面完整连续;
-    // 2) wireframe层用深色线条勾出每个三角形的边——浅色面片(低碳格点)若没有这层勾边,
-    //    在stone-50浅色背景上会"隐形",看起来像曲面缺了洞。
-    const common = {
-      data: mesh,
-      mesh,
-      getColor: [255, 255, 255],
-      flatShading: true,
-      pickable: false,
-    } as unknown as MeshLayerProps;
+    // 与论文plot_surface一致:纯色填充,不加线框。cullMode:'none'关闭背面剔除,
+    // 保证倾斜视角下陡坡面不被剔除、曲面完整;面板底色用matplotlib风格的浅灰,
+    // 让色阶浅端(YlGn近白的低碳谷地)也能在灰底上显形。
     deckRef.current.setProps({
       layers: [
         new SimpleMeshLayer({
-          ...common,
           id: `surface-fill-${title}`,
+          // deck.gl对"mesh对象直接作为data"的TS联合类型定义与运行时用法不匹配,
+          // 运行时官方示例即传同一对象,这里整体断言到层的props类型
+          data: mesh,
+          mesh,
+          // 最终颜色 = 顶点色 × getColor(默认纯黑!)。给白色让顶点色原样透出
+          getColor: [255, 255, 255],
+          flatShading: true,
           parameters: { cullMode: "none" },
-          material: { ambient: 0.9, diffuse: 0.4 },
-        } as unknown as MeshLayerProps),
-        new SimpleMeshLayer({
-          ...common,
-          id: `surface-wire-${title}`,
-          wireframe: true,
-          // 半透明深色勾边,对应论文plot_surface的linewidth=0.15细黑边
-          getColor: [50, 60, 50, 110],
+          material: { ambient: 0.82, diffuse: 0.55 },
+          pickable: false,
         } as unknown as MeshLayerProps),
       ],
     });
@@ -189,7 +197,7 @@ function SurfacePanel({
       <div className="mb-1 text-center font-serif text-sm font-semibold text-stone-800">{title}</div>
       <div
         ref={containerRef}
-        className="h-[260px] w-full overflow-hidden rounded-md border border-stone-300 bg-stone-50"
+        className="h-[260px] w-full overflow-hidden rounded-md border border-stone-300 bg-[#e9e9e7]"
         data-testid={`surface-${title}`}
       />
       <div className="mt-1 flex items-center justify-center gap-2 text-[11px] text-stone-500">
